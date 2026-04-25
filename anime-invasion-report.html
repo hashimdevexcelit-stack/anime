@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report & Appeals — Anime Invasion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet">
+<!-- jsPDF for PDF generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --bg-deep:#06030F; --purple-royal:#5B1FA8; --purple-crystal:#A855F7; --purple-glow:#C084FC;
+    --gold-rich:#C8920A; --gold-trim:#F0C040; --crystal-blue:#38BDF8; --red-alert:#F87171;
+    --text-light:#EDE8FF; --text-muted:#9D8FBB;
+    --border-gold:rgba(240,192,64,.35); --border-purple:rgba(168,85,247,.25);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg-deep);color:var(--text-light);font-family:'Rajdhani',sans-serif;overflow-x:hidden;cursor:none;}
+  .cursor{position:fixed;width:12px;height:12px;background:var(--gold-trim);border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:difference;}
+  .cursor-ring{position:fixed;width:36px;height:36px;border:1px solid var(--purple-crystal);border-radius:50%;pointer-events:none;z-index:9998;transition:all .15s ease;}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.35;pointer-events:none;z-index:9997;}
+
+  /* NAV */
+  nav{position:fixed;top:0;width:100%;z-index:200;padding:18px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,3,15,.96);border-bottom:1px solid rgba(240,192,64,.1);backdrop-filter:blur(12px);}
+  .nav-logo{font-family:'Cinzel Decorative',serif;font-size:14px;font-weight:700;color:var(--gold-trim);letter-spacing:3px;text-decoration:none;}
+  .nav-links{display:flex;gap:32px;list-style:none;}
+  .nav-links a{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);text-decoration:none;transition:color .3s;position:relative;}
+  .nav-links a.active,.nav-links a:hover{color:var(--gold-trim);}
+  .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold-trim);transition:width .3s;}
+  .nav-links a.active::after,.nav-links a:hover::after{width:100%;}
+  .nav-cta{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:3px;padding:10px 28px;background:transparent;border:1px solid var(--gold-trim);color:var(--gold-trim);text-transform:uppercase;text-decoration:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;}
+  .nav-cta:hover{background:var(--gold-trim);color:var(--bg-deep);}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  .divider{width:100%;height:1px;background:linear-gradient(to right,transparent,var(--border-gold),var(--gold-trim),var(--border-gold),transparent);}
+
+  /* PAGE HEADER */
+  .page-header{padding:120px 80px 0;background:var(--bg-deep);}
+  .page-header-inner{max-width:1200px;margin:0 auto;}
+  .ph-breadcrumb{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--text-muted);margin-bottom:32px;}
+  .ph-breadcrumb a{color:rgba(240,192,64,.6);text-decoration:none;transition:color .3s;}
+  .ph-breadcrumb a:hover{color:var(--gold-trim);}
+  .ph-breadcrumb-sep{color:rgba(240,192,64,.25);font-size:8px;}
+  .ph-top{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;padding-bottom:36px;}
+  .ph-label{font-size:10px;font-weight:700;letter-spacing:6px;text-transform:uppercase;color:var(--red-alert);opacity:.8;margin-bottom:14px;display:block;}
+  .ph-title{font-family:'Cinzel',serif;font-size:clamp(38px,6vw,72px);font-weight:700;line-height:1;color:var(--text-light);letter-spacing:-1px;}
+  .ph-title .r{color:var(--red-alert);}
+  .ph-title .g{color:var(--gold-trim);}
+  .ph-right{text-align:right;}
+  .ph-desc{font-size:15px;color:var(--text-muted);line-height:1.8;max-width:380px;margin-left:auto;}
+  .ph-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;justify-content:flex-end;}
+  .ph-badge{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border:1px solid var(--border-purple);color:var(--text-muted);}
+  .ph-rule{width:100%;height:1px;background:linear-gradient(to right,var(--red-alert) 0%,var(--gold-trim) 30%,rgba(240,192,64,.2) 70%,transparent 100%);position:relative;}
+  .ph-rule::before{content:'';position:absolute;left:0;top:-3px;width:7px;height:7px;background:var(--red-alert);transform:rotate(45deg);box-shadow:0 0 10px rgba(248,113,113,.6);}
+
+  /* CHOOSE SECTION */
+  .choose-section{padding:100px 80px;background:var(--bg-deep);}
+  .choose-inner{max-width:1000px;margin:0 auto;}
+  .choose-header{text-align:center;margin-bottom:60px;}
+  .section-label{font-size:11px;font-weight:600;letter-spacing:6px;text-transform:uppercase;color:var(--gold-trim);margin-bottom:16px;display:flex;align-items:center;gap:12px;justify-content:center;}
+  .section-label::before{content:'';display:block;width:30px;height:1px;background:linear-gradient(to left,var(--gold-trim),transparent);}
+  .section-label::after{content:'';display:block;width:30px;height:1px;background:linear-gradient(to right,var(--gold-trim),transparent);}
+  .choose-title{font-family:'Cinzel',serif;font-size:clamp(24px,3.5vw,42px);font-weight:700;color:var(--text-light);margin-bottom:12px;}
+  .choose-sub{font-size:16px;color:var(--text-muted);line-height:1.7;}
+
+  .choose-cards{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+
+  .choose-card{
+    position:relative;border:1px solid;padding:52px 44px;text-align:center;
+    cursor:none;transition:all .4s;overflow:hidden;text-decoration:none;display:block;
+    border-radius:16px;
+  }
+  .choose-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .4s;}
+  .choose-card:hover::before{opacity:1;}
+  .choose-card:hover{transform:translateY(-6px);}
+
+  /* Report card */
+  .card-report{border-color:rgba(248,113,113,.3);background:linear-gradient(135deg,rgba(248,113,113,.05),rgba(6,3,15,.95));}
+  .card-report::before{background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(248,113,113,.1),transparent);}
+  .card-report:hover{border-color:rgba(248,113,113,.6);box-shadow:0 20px 60px rgba(248,113,113,.15);}
+
+  /* Appeal card */
+  .card-appeal{border-color:rgba(240,192,64,.3);background:linear-gradient(135deg,rgba(240,192,64,.05),rgba(6,3,15,.95));}
+  .card-appeal::before{background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(240,192,64,.1),transparent);}
+  .card-appeal:hover{border-color:rgba(240,192,64,.6);box-shadow:0 20px 60px rgba(240,192,64,.12);}
+
+  .card-icon-wrap{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;font-size:36px;position:relative;}
+  .card-report .card-icon-wrap{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);}
+  .card-appeal .card-icon-wrap{background:rgba(240,192,64,.1);border:1px solid rgba(240,192,64,.3);}
+  .card-icon-wrap::before{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid;opacity:.3;animation:ringPulse 3s ease-in-out infinite;}
+  .card-report .card-icon-wrap::before{border-color:var(--red-alert);}
+  .card-appeal .card-icon-wrap::before{border-color:var(--gold-trim);}
+  @keyframes ringPulse{0%,100%{transform:scale(1);opacity:.3;}50%{transform:scale(1.1);opacity:.1;}}
+
+  .card-type{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:12px;display:block;}
+  .card-report .card-type{color:var(--red-alert);}
+  .card-appeal .card-type{color:var(--gold-trim);}
+
+  .card-heading{font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--text-light);margin-bottom:16px;}
+  .card-desc{font-size:15px;color:var(--text-muted);line-height:1.7;margin-bottom:32px;}
+  .card-action{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:3px;text-transform:uppercase;padding:14px 36px;border:1px solid;display:inline-block;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);transition:all .3s;}
+  .card-report .card-action{border-color:rgba(248,113,113,.5);color:var(--red-alert);background:transparent;}
+  .card-report:hover .card-action{background:rgba(248,113,113,.1);}
+  .card-appeal .card-action{border-color:rgba(240,192,64,.5);color:var(--gold-trim);background:transparent;}
+  .card-appeal:hover .card-action{background:rgba(240,192,64,.08);}
+
+  .card-list{list-style:none;text-align:left;margin-bottom:32px;display:flex;flex-direction:column;gap:10px;}
+  .card-list li{font-size:14px;color:var(--text-muted);display:flex;align-items:center;gap:10px;}
+  .card-list li::before{content:'✦';font-size:10px;flex-shrink:0;}
+  .card-report .card-list li::before{color:var(--red-alert);}
+  .card-appeal .card-list li::before{color:var(--gold-trim);}
+
+  /* MODAL / FORM OVERLAY */
+  .modal-overlay{position:fixed;inset:0;background:rgba(6,3,15,.92);backdrop-filter:blur(16px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{width:100%;max-width:680px;max-height:90vh;overflow-y:auto;background:linear-gradient(135deg,#0D0720,#060312);border:1px solid var(--border-gold);padding:52px;position:relative;scrollbar-width:thin;scrollbar-color:rgba(240,192,64,.3) transparent;border-radius:20px;}
+  .modal::-webkit-scrollbar{width:4px;}
+  .modal::-webkit-scrollbar-thumb{background:rgba(240,192,64,.3);}
+
+  /* Corner accents */
+  .modal::before{content:'';position:absolute;top:0;left:0;width:40px;height:40px;border-top:2px solid var(--gold-trim);border-left:2px solid var(--gold-trim);}
+  .modal::after{content:'';position:absolute;bottom:0;right:0;width:40px;height:40px;border-bottom:2px solid var(--gold-trim);border-right:2px solid var(--gold-trim);}
+
+  .modal-close{position:absolute;top:20px;right:24px;background:transparent;border:none;color:var(--text-muted);font-size:22px;cursor:none;transition:color .3s;z-index:1;}
+  .modal-close:hover{color:var(--gold-trim);}
+
+  .modal-eyebrow{font-size:10px;font-weight:700;letter-spacing:5px;text-transform:uppercase;margin-bottom:8px;display:block;}
+  .modal-report-eye{color:var(--red-alert);}
+  .modal-appeal-eye{color:var(--gold-trim);}
+
+  .modal-title{font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--text-light);margin-bottom:8px;}
+  .modal-sub{font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:36px;padding-bottom:32px;border-bottom:1px solid rgba(240,192,64,.1);}
+
+  /* FORM STYLES */
+  .form-group{margin-bottom:24px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .form-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold-trim);margin-bottom:10px;display:block;}
+  .form-label.red{color:var(--red-alert);}
+  .form-input,.form-select,.form-textarea{
+    width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border-purple);
+    color:var(--text-light);font-family:'Rajdhani',sans-serif;font-size:15px;letter-spacing:.5px;
+    padding:14px 18px;outline:none;transition:border-color .3s;
+  }
+  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(240,192,64,.5);}
+  .form-input.red-focus:focus,.form-select.red-focus:focus,.form-textarea.red-focus:focus{border-color:rgba(248,113,113,.5);}
+  .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239D8FBB' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px;cursor:none;}
+  .form-select option{background:#0D0720;color:var(--text-light);}
+  .form-textarea{min-height:130px;resize:vertical;line-height:1.6;}
+  .form-hint{font-size:12px;color:var(--text-muted);margin-top:6px;letter-spacing:.5px;}
+
+  .form-divider{width:100%;height:1px;background:rgba(240,192,64,.08);margin:28px 0;}
+
+  .form-checkbox-group{display:flex;align-items:flex-start;gap:12px;cursor:none;}
+  .form-checkbox{width:16px;height:16px;background:transparent;border:1px solid var(--border-purple);flex-shrink:0;margin-top:2px;cursor:none;accent-color:var(--purple-crystal);}
+  .form-checkbox-label{font-size:13px;color:var(--text-muted);line-height:1.5;}
+  .form-checkbox-label a{color:var(--gold-trim);text-decoration:none;}
+
+  /* SUBMIT BUTTON */
+  .btn-form-submit{width:100%;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:4px;text-transform:uppercase;padding:18px;background:linear-gradient(135deg,var(--purple-royal),var(--purple-crystal));color:white;border:none;clip-path:polygon(14px 0%,100% 0%,calc(100% - 14px) 100%,0% 100%);cursor:none;transition:all .3s;box-shadow:0 0 30px rgba(168,85,247,.35);display:flex;align-items:center;justify-content:center;gap:10px;margin-top:32px;}
+  .btn-form-submit:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(168,85,247,.6);}
+  .btn-form-submit.red-btn{background:linear-gradient(135deg,#7F1D1D,#DC2626);}
+  .btn-form-submit.red-btn:hover{box-shadow:0 8px 40px rgba(220,38,38,.4);}
+
+  /* SUCCESS STATE */
+  .success-state{display:none;text-align:center;padding:40px 20px;}
+  .success-state.show{display:block;}
+  .success-icon{font-size:56px;margin-bottom:24px;filter:drop-shadow(0 0 20px rgba(52,211,153,.5));}
+  .success-title{font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--text-light);margin-bottom:12px;}
+  .success-sub{font-size:15px;color:var(--text-muted);line-height:1.7;margin-bottom:28px;}
+  .success-ref{font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;color:var(--gold-trim);padding:10px 24px;border:1px solid var(--border-gold);display:inline-block;margin-bottom:28px;}
+  .btn-pdf{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:3px;text-transform:uppercase;padding:14px 36px;background:linear-gradient(135deg,var(--purple-royal),var(--purple-crystal));color:white;border:none;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);cursor:none;display:inline-flex;align-items:center;gap:8px;transition:all .3s;margin-bottom:12px;}
+  .btn-pdf:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(168,85,247,.5);}
+  .btn-close-modal{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:3px;text-transform:uppercase;padding:12px 32px;background:transparent;color:var(--gold-trim);border:1px solid var(--border-gold);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);cursor:none;display:inline-block;margin-left:12px;transition:all .3s;}
+  .btn-close-modal:hover{background:rgba(240,192,64,.08);}
+
+  /* INFO SECTION */
+  .info-section{padding:80px;background:linear-gradient(180deg,var(--bg-deep) 0%,#0A0418 50%,var(--bg-deep) 100%);}
+  .info-inner{max-width:1000px;margin:0 auto;}
+  .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .info-card{background:linear-gradient(135deg,#0D0720,#060312);border:1px solid var(--border-purple);padding:32px;transition:all .3s;cursor:none;border-radius:16px;}
+  .info-card:hover{border-color:rgba(168,85,247,.4);transform:translateY(-3px);}
+  .info-icon{font-size:28px;margin-bottom:16px;display:block;}
+  .info-title{font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--text-light);margin-bottom:10px;}
+  .info-desc{font-size:13px;color:var(--text-muted);line-height:1.7;}
+
+  /* REVEAL */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  .rd1{transition-delay:.1s}.rd2{transition-delay:.2s}
+
+  /* FOOTER */
+  footer{padding:60px 80px 40px;border-top:1px solid rgba(240,192,64,.1);background:var(--bg-deep);}
+  .footer-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px;}
+  .footer-brand p{font-size:13px;color:var(--text-muted);max-width:240px;line-height:1.7;margin-top:10px;}
+  .footer-links h4{font-family:'Cinzel',serif;font-size:12px;letter-spacing:3px;color:var(--gold-trim);margin-bottom:18px;text-transform:uppercase;}
+  .footer-links ul{list-style:none;display:flex;flex-direction:column;gap:12px;}
+  .footer-links a{font-size:13px;color:var(--text-muted);text-decoration:none;letter-spacing:1px;transition:color .3s;}
+  .footer-links a:hover{color:var(--text-light);}
+  .footer-bottom{border-top:1px solid rgba(255,255,255,.05);padding-top:28px;display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;}
+  .footer-bottom p{font-size:12px;color:var(--text-muted);letter-spacing:1px;}
+  .roblox-badge{font-size:11px;letter-spacing:2px;color:var(--gold-trim);text-transform:uppercase;opacity:.6;}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">Anime Invasion</a>
+  <ul class="nav-links">
+    <li><a href="anime-invasion-game.html">The Game</a></li>
+    <li><a href="anime-invasion-media.html">Media</a></li>
+    <li><a href="#">Staff</a></li>
+    <li><a href="anime-invasion-report.html" class="active">Report / Appeals</a></li>
+  </ul>
+  <a href="https://www.roblox.com" target="_blank" class="nav-cta">Play Free</a>
+</nav>
+
+<!-- PAGE HEADER -->
+<section class="page-header">
+  <div class="page-header-inner">
+    <div class="ph-breadcrumb">
+      <a href="anime-invasion-landing.html">Home</a>
+      <span class="ph-breadcrumb-sep">✦</span>
+      <span>Report & Appeals</span>
+    </div>
+    <div class="ph-top">
+      <div>
+        <span class="ph-label">Moderation · Staff Review</span>
+        <h1 class="ph-title"><span class="r">Report</span> <span class="g">&</span> Appeals</h1>
+      </div>
+      <div class="ph-right">
+        <p class="ph-desc">Submit a player report or appeal a staff decision. Every submission is reviewed by our moderation team within 48–72 hours.</p>
+        <div class="ph-badges">
+          <span class="ph-badge" style="border-color:rgba(248,113,113,.4);color:#F87171;">🚨 Report a Player</span>
+          <span class="ph-badge" style="border-color:rgba(240,192,64,.4);color:var(--gold-trim);">⚖️ Appeal a Ban</span>
+        </div>
+      </div>
+    </div>
+    <div class="ph-rule"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CHOOSE -->
+<section class="choose-section">
+  <div class="choose-inner">
+    <div class="choose-header reveal">
+      <div class="section-label">Choose Your Submission Type</div>
+      <h2 class="choose-title">What Would You Like to Submit?</h2>
+      <p class="choose-sub">All submissions are reviewed by our moderation team within 48–72 hours. Please provide as much detail as possible to ensure a thorough review.</p>
+    </div>
+
+    <div class="choose-cards reveal rd1">
+
+      <!-- REPORT CARD -->
+      <a href="#" class="choose-card card-report" onclick="openModal('report');return false;">
+        <div class="card-icon-wrap">🚨</div>
+        <span class="card-type">Player Report</span>
+        <h3 class="card-heading">Report a Player</h3>
+        <p class="card-desc">Report rule-breaking, cheating, harassment, or inappropriate behaviour from another player or staff member.</p>
+        <ul class="card-list">
+          <li>Cheating / exploiting</li>
+          <li>Harassment or toxic behaviour</li>
+          <li>Inappropriate content</li>
+          <li>Staff misconduct</li>
+        </ul>
+        <span class="card-action">Submit a Report →</span>
+      </a>
+
+      <!-- APPEAL CARD -->
+      <a href="#" class="choose-card card-appeal" onclick="openModal('appeal');return false;">
+        <div class="card-icon-wrap">⚖️</div>
+        <span class="card-type">Ban Appeal</span>
+        <h3 class="card-heading">Appeal a Decision</h3>
+        <p class="card-desc">Believe your ban or punishment was unjust? Submit a formal appeal and our senior staff will review your case.</p>
+        <ul class="card-list">
+          <li>Ban appeals</li>
+          <li>Mute / restriction appeals</li>
+          <li>Rank removal disputes</li>
+          <li>False punishment appeals</li>
+        </ul>
+        <span class="card-action">Submit an Appeal →</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- INFO CARDS -->
+<section class="info-section">
+  <div class="info-inner">
+    <div class="info-grid reveal">
+      <div class="info-card">
+        <span class="info-icon">⏱️</span>
+        <div class="info-title">Response Time</div>
+        <p class="info-desc">Our moderation team reviews all submissions within 48–72 hours. Complex cases may take up to 7 days.</p>
+      </div>
+      <div class="info-card">
+        <span class="info-icon">🔒</span>
+        <div class="info-title">Confidential</div>
+        <p class="info-desc">All reports and appeals are handled privately. Submitter information is never shared with the reported party.</p>
+      </div>
+      <div class="info-card">
+        <span class="info-icon">📄</span>
+        <div class="info-title">PDF Receipt</div>
+        <p class="info-desc">After submitting, you can download a PDF copy of your submission for your own records and reference.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────────────────────────────── -->
+<!-- REPORT MODAL -->
+<!-- ──────────────────────────────────────── -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('report')">✕</button>
+
+    <!-- Form state -->
+    <div id="reportForm">
+      <span class="modal-eyebrow modal-report-eye">🚨 Player Report</span>
+      <h2 class="modal-title">Submit a Report</h2>
+      <p class="modal-sub">Fill in the details below. Our moderation team will review your report within 48–72 hours. All fields marked with * are required.</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label red">Your Username *</label>
+          <input class="form-input red-focus" id="r_username" type="text" placeholder="YourRobloxName">
+        </div>
+        <div class="form-group">
+          <label class="form-label red">Reported Player Username *</label>
+          <input class="form-input red-focus" id="r_reported" type="text" placeholder="ReportedPlayerName">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label red">Violation Type *</label>
+        <select class="form-select red-focus" id="r_type">
+          <option value="">— Select violation type —</option>
+          <option>Cheating / Exploiting</option>
+          <option>Harassment / Toxic Behaviour</option>
+          <option>Inappropriate Content</option>
+          <option>Staff Misconduct</option>
+          <option>Scamming</option>
+          <option>Bug Abuse</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label red">When did this occur? *</label>
+        <input class="form-input red-focus" id="r_date" type="datetime-local">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label red">Server / Zone (if known)</label>
+        <input class="form-input red-focus" id="r_zone" type="text" placeholder="e.g. Golden Sanctum, Crystal Caverns...">
+      </div>
+
+      <div class="form-divider"></div>
+
+      <div class="form-group">
+        <label class="form-label red">Description of Incident *</label>
+        <textarea class="form-textarea red-focus" id="r_desc" placeholder="Describe what happened in as much detail as possible. Include any context, witnesses, or sequence of events..."></textarea>
+        <span class="form-hint">Minimum 50 characters. Be specific — vague reports are harder to action.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label red">Evidence (Screenshot links / video URLs)</label>
+        <textarea class="form-textarea red-focus" id="r_evidence" style="min-height:80px;" placeholder="Paste image links, Gyazo URLs, YouTube clips, or any other evidence..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <div class="form-checkbox-group">
+          <input type="checkbox" class="form-checkbox" id="r_agree">
+          <label class="form-checkbox-label" for="r_agree">I confirm that the information provided is accurate to the best of my knowledge. I understand that false reports may result in action against my account. I agree to the <a href="#">Terms of Service</a>.</label>
+        </div>
+      </div>
+
+      <button class="btn-form-submit red-btn" onclick="submitForm('report')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        Submit Report
+      </button>
+    </div>
+
+    <!-- Success state -->
+    <div class="success-state" id="reportSuccess">
+      <div class="success-icon">✅</div>
+      <h3 class="success-title">Report Submitted</h3>
+      <p class="success-sub">Your report has been received and will be reviewed by our moderation team within 48–72 hours. A copy has been prepared for your records below.</p>
+      <div class="success-ref" id="reportRef">REF: —</div>
+      <br>
+      <button class="btn-pdf" onclick="generatePDF('report')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Download PDF Copy
+      </button>
+      <button class="btn-close-modal" onclick="closeModal('report')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────── -->
+<!-- APPEAL MODAL -->
+<!-- ──────────────────────────────────────── -->
+<div class="modal-overlay" id="appealModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('appeal')">✕</button>
+
+    <!-- Form state -->
+    <div id="appealForm">
+      <span class="modal-eyebrow modal-appeal-eye">⚖️ Ban Appeal</span>
+      <h2 class="modal-title">Submit an Appeal</h2>
+      <p class="modal-sub">Believe your punishment was unjust? Submit a formal appeal below. Senior staff will review your case within 48–72 hours. Provide honest, detailed information for the best outcome.</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Your Roblox Username *</label>
+          <input class="form-input" id="a_username" type="text" placeholder="YourRobloxName">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Discord (optional)</label>
+          <input class="form-input" id="a_discord" type="text" placeholder="username#0000">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Type of Punishment *</label>
+        <select class="form-select" id="a_type">
+          <option value="">— Select punishment type —</option>
+          <option>Permanent Ban</option>
+          <option>Temporary Ban</option>
+          <option>Mute / Restriction</option>
+          <option>Rank Removal</option>
+          <option>Warning</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date of Punishment *</label>
+          <input class="form-input" id="a_date" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Staff Member Who Issued It</label>
+          <input class="form-input" id="a_staff" type="text" placeholder="Staff username (if known)">
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <div class="form-group">
+        <label class="form-label">Reason Given for Punishment *</label>
+        <textarea class="form-textarea" id="a_reason" style="min-height:90px;" placeholder="What reason were you given for the punishment?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Why Should This Be Overturned? *</label>
+        <textarea class="form-textarea" id="a_why" placeholder="Explain your case. Why do you believe this punishment was unjust or incorrect? Provide as much context as possible..."></textarea>
+        <span class="form-hint">Be honest. False appeals delay the process and may result in further action.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Supporting Evidence (optional)</label>
+        <textarea class="form-textarea" id="a_evidence" style="min-height:80px;" placeholder="Paste any links to screenshots, recordings, or other evidence supporting your appeal..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Anything Else to Add?</label>
+        <textarea class="form-textarea" id="a_extra" style="min-height:80px;" placeholder="Any additional context, witnesses, or information that may assist the review..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <div class="form-checkbox-group">
+          <input type="checkbox" class="form-checkbox" id="a_agree">
+          <label class="form-checkbox-label" for="a_agree">I confirm that all information provided is truthful and accurate. I understand that dishonest appeals may result in permanent action. I agree to the <a href="#">Terms of Service</a>.</label>
+        </div>
+      </div>
+
+      <button class="btn-form-submit" onclick="submitForm('appeal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        Submit Appeal
+      </button>
+    </div>
+
+    <!-- Success state -->
+    <div class="success-state" id="appealSuccess">
+      <div class="success-icon">⚖️</div>
+      <h3 class="success-title">Appeal Submitted</h3>
+      <p class="success-sub">Your appeal has been received and will be reviewed by our senior staff within 48–72 hours. Complex cases may take longer. You can download a PDF copy of your submission below.</p>
+      <div class="success-ref" id="appealRef">REF: —</div>
+      <br>
+      <button class="btn-pdf" onclick="generatePDF('appeal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Download PDF Copy
+      </button>
+      <button class="btn-close-modal" onclick="closeModal('appeal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="anime-invasion-landing.html" class="nav-logo" style="text-decoration:none;">Anime Invasion</a>
+      <p>A royal anime universe on Roblox. Enter the celestial realm, battle, and ascend.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="anime-invasion-landing.html">Home</a></li>
+        <li><a href="anime-invasion-game.html">The Game</a></li>
+        <li><a href="anime-invasion-media.html">Media</a></li>
+        <li><a href="#">Staff</a></li>
+        <li><a href="anime-invasion-report.html">Report / Appeals</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Help</h4>
+      <ul>
+        <li><a href="#" onclick="openModal('report');return false;">Submit a Report</a></li>
+        <li><a href="#" onclick="openModal('appeal');return false;">Submit an Appeal</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Anime Invasion. All rights reserved.</p>
+    <span class="roblox-badge">Available on Roblox ✦</span>
+  </div>
+</footer>
+
+<script>
+  // Cursor
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx-6+'px';cursor.style.top=my-6+'px';});
+  (function a(){rx+=(mx-rx-18)*.12;ry+=(my-ry-18)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(a);})();
+  document.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cursor.style.transform='scale(2)';ring.style.borderColor='var(--gold-trim)';});
+    el.addEventListener('mouseleave',()=>{cursor.style.transform='scale(1)';ring.style.borderColor='var(--purple-crystal)';});
+  });
+
+  // Reveal
+  const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  // Modal open/close
+  function openModal(type){
+    document.getElementById(type+'Modal').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(type){
+    document.getElementById(type+'Modal').classList.remove('open');
+    document.body.style.overflow='';
+    // Reset form
+    const form=document.getElementById(type+'Form');
+    const success=document.getElementById(type+'Success');
+    form.style.display='block';
+    success.classList.remove('show');
+  }
+
+  // Close on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+    overlay.addEventListener('click',e=>{
+      if(e.target===overlay){
+        const type=overlay.id.replace('Modal','');
+        closeModal(type);
+      }
+    });
+  });
+
+  // Generate reference number
+  function genRef(){return 'AI-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).substr(2,4).toUpperCase();}
+
+  // Submit form
+  function submitForm(type){
+    const agreeId=type==='report'?'r_agree':'a_agree';
+    if(!document.getElementById(agreeId).checked){
+      alert('Please confirm the declaration before submitting.');
+      return;
+    }
+    const ref=genRef();
+    document.getElementById(type+'Ref').textContent='REF: '+ref;
+    document.getElementById(type+'Form').style.display='none';
+    document.getElementById(type+'Success').classList.add('show');
+    // Store for PDF
+    window[type+'Data']={ref, timestamp:new Date().toLocaleString()};
+    if(type==='report'){
+      window[type+'Data'].username=document.getElementById('r_username').value||'—';
+      window[type+'Data'].reported=document.getElementById('r_reported').value||'—';
+      window[type+'Data'].vtype=document.getElementById('r_type').value||'—';
+      window[type+'Data'].when=document.getElementById('r_date').value||'—';
+      window[type+'Data'].zone=document.getElementById('r_zone').value||'—';
+      window[type+'Data'].desc=document.getElementById('r_desc').value||'—';
+      window[type+'Data'].evidence=document.getElementById('r_evidence').value||'—';
+    } else {
+      window[type+'Data'].username=document.getElementById('a_username').value||'—';
+      window[type+'Data'].discord=document.getElementById('a_discord').value||'—';
+      window[type+'Data'].ptype=document.getElementById('a_type').value||'—';
+      window[type+'Data'].date=document.getElementById('a_date').value||'—';
+      window[type+'Data'].staff=document.getElementById('a_staff').value||'—';
+      window[type+'Data'].reason=document.getElementById('a_reason').value||'—';
+      window[type+'Data'].why=document.getElementById('a_why').value||'—';
+      window[type+'Data'].evidence=document.getElementById('a_evidence').value||'—';
+      window[type+'Data'].extra=document.getElementById('a_extra').value||'—';
+    }
+  }
+
+  // PDF generation
+  function generatePDF(type){
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const d=window[type+'Data'];
+    const W=210,margin=20,colW=W-margin*2;
+
+    // Background
+    doc.setFillColor(6,3,15);
+    doc.rect(0,0,W,297,'F');
+
+    // Header bar
+    doc.setFillColor(91,31,168);
+    doc.rect(0,0,W,28,'F');
+
+    // Title
+    doc.setTextColor(240,192,64);
+    doc.setFontSize(16);
+    doc.setFont('helvetica','bold');
+    doc.text('ANIME INVASION',margin,12);
+    doc.setFontSize(10);
+    doc.setTextColor(200,180,255);
+    doc.text(type==='report'?'Player Report Submission':'Ban Appeal Submission',margin,20);
+
+    // Ref & date
+    doc.setFontSize(9);
+    doc.setTextColor(200,180,255);
+    doc.text('Reference: '+d.ref,W-margin,12,{align:'right'});
+    doc.text('Submitted: '+d.timestamp,W-margin,20,{align:'right'});
+
+    // Divider line
+    doc.setDrawColor(240,192,64);
+    doc.setLineWidth(.5);
+    doc.line(margin,32,W-margin,32);
+
+    let y=42;
+    const addField=(label,value)=>{
+      doc.setFontSize(8);
+      doc.setTextColor(157,143,187);
+      doc.setFont('helvetica','bold');
+      doc.text(label.toUpperCase(),margin,y);
+      y+=5;
+      doc.setFontSize(10);
+      doc.setTextColor(237,232,255);
+      doc.setFont('helvetica','normal');
+      const lines=doc.splitTextToSize(value||'—',colW);
+      doc.text(lines,margin,y);
+      y+=lines.length*5+8;
+      // light separator
+      doc.setDrawColor(30,15,60);
+      doc.setLineWidth(.3);
+      doc.line(margin,y-4,W-margin,y-4);
+    };
+
+    if(type==='report'){
+      addField('Your Username',d.username);
+      addField('Reported Player',d.reported);
+      addField('Violation Type',d.vtype);
+      addField('Date & Time of Incident',d.when);
+      addField('Server / Zone',d.zone);
+      addField('Description of Incident',d.desc);
+      addField('Evidence',d.evidence);
+    } else {
+      addField('Your Username',d.username);
+      addField('Discord',d.discord);
+      addField('Punishment Type',d.ptype);
+      addField('Date of Punishment',d.date);
+      addField('Staff Member',d.staff);
+      addField('Reason Given',d.reason);
+      addField('Grounds for Appeal',d.why);
+      addField('Supporting Evidence',d.evidence);
+      addField('Additional Information',d.extra);
+    }
+
+    // Footer
+    doc.setFillColor(20,10,40);
+    doc.rect(0,280,W,17,'F');
+    doc.setFontSize(8);
+    doc.setTextColor(100,80,150);
+    doc.text('© 2026 Anime Invasion  ·  This document is for your personal records only.',margin,290);
+    doc.text('animeinvasion.roblox',W-margin,290,{align:'right'});
+
+    doc.save('anime-invasion-'+type+'-'+d.ref+'.pdf');
+  }
+</script>
+</body>
+</html>
