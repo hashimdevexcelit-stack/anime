@@ -178,9 +178,8 @@
 
   .rock {
     position: absolute;
-    border-radius: var(--br);
     background: var(--rock-color);
-    box-shadow: 0 0 var(--glow-size) var(--glow-color), inset 0 1px 0 rgba(255,240,180,0.3);
+    box-shadow: 0 0 var(--glow-size) var(--glow-color);
     transform: rotate(var(--rot)) scale(1);
     animation: rockFloat var(--dur) ease-in-out infinite, rockGlow var(--glow-dur) ease-in-out infinite;
     animation-delay: var(--delay);
@@ -315,7 +314,7 @@
   .logo-img {
     position: relative;
     z-index: 1;
-    width: clamp(320px, 30vw, 680px);
+    width: clamp(320px, 55vw, 680px);
     height: auto;
     display: block;
     filter: drop-shadow(0 0 24px rgba(240,192,64,0.5)) drop-shadow(0 0 48px rgba(168,85,247,0.35));
@@ -1260,7 +1259,7 @@
     <li><a href="anime-invasion-game.html">The Game</a></li>
     <li><a href="anime-invasion-media.html">Media</a></li>
     <li><a href="anime-invasion-staff.html">Staff</a></li>
-    <li><a href="anime-invasion-report.html">Report / Appeals</a></li>
+    <li><a href="anime-invasion-report.html">Support</a></li>
   </ul>
   <a href="https://www.roblox.com" target="_blank" class="nav-cta">Play Free</a>
 </nav>
@@ -1650,38 +1649,25 @@
     });
   });
 
-  // Generate golden rocky asteroid particles
-  const starsContainer = document.getElementById('stars');
-
+  // Golden diamond particles (sharp 4-edge like the logo)
   const rockColors = [
-    { bg: 'rgba(200,146,10,0.85)',  glow: 'rgba(240,192,64,0.5)',  glowSize: '6px'  },
-    { bg: 'rgba(240,192,64,0.9)',   glow: 'rgba(255,224,130,0.6)', glowSize: '8px'  },
-    { bg: 'rgba(180,120,8,0.75)',   glow: 'rgba(200,146,10,0.4)',  glowSize: '5px'  },
-    { bg: 'rgba(255,210,80,0.8)',   glow: 'rgba(255,240,150,0.5)', glowSize: '7px'  },
-    { bg: 'rgba(160,100,5,0.7)',    glow: 'rgba(200,146,10,0.35)', glowSize: '4px'  },
+    { bg: 'rgba(200,146,10,0.9)',  glow: 'rgba(240,192,64,0.6)',  glowSize: '7px'  },
+    { bg: 'rgba(240,192,64,0.95)', glow: 'rgba(255,224,130,0.7)', glowSize: '9px'  },
+    { bg: 'rgba(180,120,8,0.8)',   glow: 'rgba(200,146,10,0.45)', glowSize: '5px'  },
+    { bg: 'rgba(255,210,80,0.85)', glow: 'rgba(255,240,150,0.55)',glowSize: '8px'  },
+    { bg: 'rgba(168,85,247,0.6)',  glow: 'rgba(192,132,252,0.4)', glowSize: '6px'  },
   ];
 
-  // Shapes: border-radius variants to look like rough rocks/asteroids
-  const rockShapes = [
-    '40% 60% 55% 45% / 50% 40% 60% 50%',
-    '60% 40% 45% 55% / 45% 55% 45% 55%',
-    '50% 50% 60% 40% / 60% 40% 50% 50%',
-    '35% 65% 50% 50% / 55% 45% 55% 45%',
-    '55% 45% 40% 60% / 40% 60% 45% 55%',
-    '3px',   // small pebble — nearly square
-    '2px',
-  ];
-
+  const starsContainer = document.getElementById('stars');
   for (let i = 0; i < 90; i++) {
     const rock = document.createElement('div');
     rock.className = 'rock';
 
     const color = rockColors[Math.floor(Math.random() * rockColors.length)];
-    const shape = rockShapes[Math.floor(Math.random() * rockShapes.length)];
-
-    // Varied sizes — small pebbles to chunky rocks
-    const w = Math.random() * 7 + 2;      // 2px – 9px wide
-    const h = Math.random() * 5 + 2;      // 2px – 7px tall
+    // Randomise between a pure diamond and a slightly elongated shard
+    const isElongated = Math.random() > 0.4;
+    const w = isElongated ? Math.random() * 5 + 3 : Math.random() * 9 + 5;
+    const h = isElongated ? Math.random() * 12 + 6 : Math.random() * 9 + 5;
     const rot = Math.random() * 360;
     const dur = (Math.random() * 5 + 3).toFixed(1);
     const glowDur = (Math.random() * 4 + 2).toFixed(1);
@@ -1697,7 +1683,8 @@
       --rock-color: ${color.bg};
       --glow-color: ${color.glow};
       --glow-size: ${color.glowSize};
-      --br: ${shape};
+      --br: 0px;
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
       --rot: ${rot}deg;
       --dur: ${dur}s;
       --glow-dur: ${glowDur}s;
