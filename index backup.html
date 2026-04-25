@@ -287,44 +287,44 @@
 
   /* LOGO DISPLAY */
   .logo-display {
-    margin: 0 auto 36px;
-    animation: fadeUp 1s ease 0.3s both, logoPulse 4s ease-in-out infinite 1.3s;
-    position: relative;
-    display: inline-block;
+    margin: 0 auto 30px;
+    animation: fadeUp 1s ease 0.3s both;
   }
 
-  /* Glow blob behind the logo */
-  .logo-display::before {
-    content: '';
-    position: absolute;
-    inset: -40px -60px;
-    background:
-      radial-gradient(ellipse 70% 55% at 40% 50%, rgba(240,192,64,0.35) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 65% 55%, rgba(168,85,247,0.4) 0%, transparent 60%);
-    filter: blur(28px);
-    z-index: 0;
-    border-radius: 50%;
-    animation: glowPulse 4s ease-in-out infinite;
-  }
-
-  @keyframes glowPulse {
-    0%, 100% { opacity: 0.85; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.06); }
-  }
-
-  .logo-img {
-    position: relative;
-    z-index: 1;
-    width: clamp(320px, 30vw, 680px);
-    height: auto;
+  .logo-text-main {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(52px, 9vw, 110px);
+    font-weight: 900;
+    line-height: 0.9;
     display: block;
-    filter: drop-shadow(0 0 24px rgba(240,192,64,0.5)) drop-shadow(0 0 48px rgba(168,85,247,0.35));
+  }
+
+  .logo-anime {
+    color: var(--gold-trim);
+    text-shadow:
+      0 0 30px rgba(240,192,64,0.8),
+      0 0 60px rgba(240,192,64,0.4),
+      0 0 100px rgba(240,192,64,0.2);
+    -webkit-text-stroke: 1px rgba(255,224,130,0.5);
+  }
+
+  .logo-invasion {
+    color: var(--purple-glow);
+    text-shadow:
+      0 0 30px rgba(192,132,252,0.8),
+      0 0 60px rgba(168,85,247,0.5),
+      0 0 100px rgba(91,31,168,0.3);
+    -webkit-text-stroke: 1px rgba(192,132,252,0.3);
+    margin-top: -8px;
+    display: block;
   }
 
   @keyframes logoPulse {
-    0%, 100% { filter: drop-shadow(0 0 24px rgba(240,192,64,0.5)) drop-shadow(0 0 48px rgba(168,85,247,0.35)); }
-    50% { filter: drop-shadow(0 0 36px rgba(240,192,64,0.75)) drop-shadow(0 0 70px rgba(168,85,247,0.55)); }
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.15); }
   }
+
+  .logo-display { animation: fadeUp 1s ease 0.3s both, logoPulse 4s ease-in-out infinite 1.3s; }
 
   .hero-tagline {
     font-family: 'Rajdhani', sans-serif;
@@ -1259,7 +1259,7 @@
   <ul class="nav-links">
     <li><a href="anime-invasion-game.html">The Game</a></li>
     <li><a href="anime-invasion-media.html">Media</a></li>
-    <li><a href="anime-invasion-staff.html">Staff</a></li>
+    <li><a href="#">Staff</a></li>
     <li><a href="anime-invasion-report.html">Report / Appeals</a></li>
   </ul>
   <a href="https://www.roblox.com" target="_blank" class="nav-cta">Play Free</a>
@@ -1291,7 +1291,8 @@
     <div class="hero-eyebrow">A Roblox Universe Awaits</div>
 
     <div class="logo-display">
-      <img src="logo_anime_invasion.png" alt="Anime Invasion" class="logo-img">
+      <span class="logo-text-main logo-anime">ANIME</span>
+      <span class="logo-text-main logo-invasion">INVASION</span>
     </div>
 
     <p class="hero-tagline">Enter the Celestial Realm — <span>Battle. Conquer. Ascend.</span></p>

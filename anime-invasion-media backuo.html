@@ -53,59 +53,18 @@
 
   .divider{width:100%;height:1px;background:linear-gradient(to right,transparent,var(--border-gold),var(--gold-trim),var(--border-gold),transparent);}
 
-  /* GALLERY FILTER — lives inside gallery section */
-  .gallery-filter{margin-bottom:32px;}
-  .gallery-filter-inner{
-    display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
-    padding:18px 24px;
-    border:1px solid rgba(240,192,64,.1);
-    background:rgba(13,7,32,.6);
-    border-radius:12px;
-  }
-  .filter-label{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--text-muted);flex-shrink:0;}
-  .filter-tabs{display:flex;gap:0;flex-wrap:wrap;}
-  .filter-tab{
-    font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11px;letter-spacing:3px;
-    text-transform:uppercase;padding:10px 22px;
-    border:none;border-bottom:2px solid transparent;
-    color:var(--text-muted);background:transparent;cursor:none;transition:all .3s;
-  }
-  .filter-tab:hover{color:var(--gold-trim);}
-  .filter-tab.active{
-    color:var(--gold-trim);border-bottom-color:var(--gold-trim);
-    background:rgba(240,192,64,.05);
-  }
-  .filter-count{font-size:12px;letter-spacing:2px;color:var(--text-muted);flex-shrink:0;}
-  .filter-count span{color:var(--gold-trim);font-weight:700;}
+  /* FILTER BAR */
+  .filter-section{padding:40px 80px;background:var(--bg-deep);position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(240,192,64,.08);backdrop-filter:blur(12px);}
+  .filter-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+  .filter-label{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--text-muted);}
+  .filter-tabs{display:flex;gap:8px;flex-wrap:wrap;}
+  .filter-tab{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:3px;text-transform:uppercase;padding:9px 22px;border:1px solid var(--border-purple);color:var(--text-muted);background:transparent;cursor:none;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);transition:all .3s;}
+  .filter-tab:hover{border-color:var(--purple-crystal);color:var(--purple-glow);}
+  .filter-tab.active{border-color:var(--gold-trim);color:var(--gold-trim);background:rgba(240,192,64,.06);}
+  .filter-count{font-size:11px;letter-spacing:2px;color:var(--text-muted);}
+  .filter-count span{color:var(--gold-trim);}
 
-  /* GALLERY GRID — 3 rows, columns auto-fill */
-  .gallery-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    grid-template-rows:repeat(3,auto);
-    gap:16px;
-  }
-  .masonry-item{
-    border:1px solid var(--border-purple);overflow:hidden;position:relative;
-    cursor:none;transition:all .35s;
-    background:linear-gradient(135deg,#0D0720,#060312);
-    display:flex;flex-direction:column;border-radius:16px;
-  }
-  .masonry-item:hover{border-color:rgba(168,85,247,.5);transform:translateY(-3px);box-shadow:0 12px 40px rgba(91,31,168,.25);}
-  /* Hover overlay */
-  .masonry-item::after{
-    content:'View';position:absolute;inset:0;
-    background:rgba(91,31,168,.12);
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:4px;
-    color:var(--gold-trim);text-transform:uppercase;
-    opacity:0;transition:opacity .3s;border-radius:16px;
-  }
-  .masonry-item:hover::after{opacity:1;}
-  .masonry-img{width:100%;flex-shrink:0;}
-  .masonry-img-inner{width:100%;height:200px;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;}
-  .masonry-img-inner::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(6,3,15,.85) 100%);}
-  .masonry-body{padding:18px;flex:1;}
+  /* FEATURED STRIP */
   .featured-section{padding:70px 80px 60px;background:linear-gradient(180deg,var(--bg-deep) 0%,#0A0420 100%);}
   .featured-inner{max-width:1200px;margin:0 auto;}
   .section-label{font-size:11px;font-weight:600;letter-spacing:6px;text-transform:uppercase;color:var(--gold-trim);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
@@ -200,11 +159,11 @@
 <div class="cursor-ring" id="cursorRing"></div>
 
 <nav>
-  <a href="anime-invasion-landing.html" class="nav-logo">Anime Invasion</a>
+  <a href="index.html" class="nav-logo">Anime Invasion</a>
   <ul class="nav-links">
     <li><a href="anime-invasion-game.html">The Game</a></li>
     <li><a href="anime-invasion-media.html" class="active">Media</a></li>
-    <li><a href="anime-invasion-staff.html">Staff</a></li>
+    <li><a href="#">Staff</a></li>
     <li><a href="anime-invasion-report.html">Report / Appeals</a></li>
   </ul>
   <a href="https://www.roblox.com" target="_blank" class="nav-cta">Play Free</a>
@@ -475,10 +434,11 @@
   function filterGallery(cat, btn) {
     document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
     btn.classList.add('active');
-    const items = document.querySelectorAll('.gallery-grid .masonry-item');
+    const items = document.querySelectorAll('.masonry-item, .featured-card');
     let count = 0;
     items.forEach(item => {
-      const show = cat === 'all' || item.dataset.cat === cat;
+      const itemCat = item.dataset.cat;
+      const show = cat === 'all' || itemCat === cat;
       item.style.display = show ? '' : 'none';
       if(show) count++;
     });
