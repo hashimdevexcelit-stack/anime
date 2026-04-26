@@ -258,7 +258,7 @@
     <div class="choose-cards reveal rd1">
 
       <!-- CARD 1 — MERGED: Report + Appeal -->
-      <a href="#" class="choose-card card-report" onclick="openModal('report');return false;">
+      <a href="anime-invasion-report.html#report" class="choose-card card-report" onclick="openModal('report');return false;">
         <div class="card-icon-wrap">🛡️</div>
         <span class="card-type">Player Report & Ban Appeal</span>
         <h3 class="card-heading">Support Centre</h3>
@@ -274,7 +274,7 @@
       </a>
 
       <!-- CARD 2 — STAFF APPLICATION -->
-      <a href="#" class="choose-card card-appeal" onclick="openModal('appeal');return false;">
+      <a href="anime-invasion-report.html#staff" class="choose-card card-appeal" onclick="openModal('appeal');return false;">
         <div class="card-icon-wrap">🌱</div>
         <span class="card-type">Staff Application</span>
         <h3 class="card-heading">Apply to Be Staff</h3>
@@ -531,8 +531,8 @@
     <div class="footer-links">
       <h4>Help</h4>
       <ul>
-        <li><a href="#" onclick="openModal('report');return false;">Submit a Report</a></li>
-        <li><a href="#" onclick="openModal('appeal');return false;">Submit an Appeal</a></li>
+        <li><a href="anime-invasion-report.html#report" onclick="openModal('report');return false;">Submit a Report</a></li>
+        <li><a href="anime-invasion-report.html#staff" onclick="openModal('appeal');return false;">Apply to Be Staff</a></li>
       </ul>
     </div>
   </div>
@@ -557,19 +557,54 @@
   const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:.1});
   document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-  // Modal open/close
-  function openModal(type){
-    document.getElementById(type+'Modal').classList.add('open');
-    document.body.style.overflow='hidden';
-  }
-  function closeModal(type){
-    document.getElementById(type+'Modal').classList.remove('open');
-    document.body.style.overflow='';
-    // Reset form
+  // Modal routing + open/close
+  const modalRouteMap={report:'report',appeal:'staff'};
+  const routeModalMap=Object.fromEntries(Object.entries(modalRouteMap).map(([type,slug])=>[slug,type]));
+
+  function resetModalState(type){
     const form=document.getElementById(type+'Form');
     const success=document.getElementById(type+'Success');
     form.style.display='block';
     success.classList.remove('show');
+  }
+
+  function setBodyModalState(){
+    const anyOpen=document.querySelector('.modal-overlay.open');
+    document.body.style.overflow=anyOpen?'hidden':'';
+  }
+
+  function openModal(type,updateHash=true){
+    document.querySelectorAll('.modal-overlay.open').forEach(overlay=>{
+      if(overlay.id!==type+'Modal') overlay.classList.remove('open');
+    });
+    document.getElementById(type+'Modal').classList.add('open');
+    setBodyModalState();
+    if(updateHash){
+      const nextHash='#'+modalRouteMap[type];
+      if(window.location.hash!==nextHash) history.pushState(null,'',nextHash);
+    }
+  }
+
+  function closeModal(type,updateHash=true){
+    document.getElementById(type+'Modal').classList.remove('open');
+    setBodyModalState();
+    resetModalState(type);
+    if(updateHash && routeModalMap[window.location.hash.replace('#','')]){
+      const cleanUrl=window.location.pathname+window.location.search;
+      history.pushState(null,'',cleanUrl);
+    }
+  }
+
+  function syncModalToRoute(){
+    const type=routeModalMap[window.location.hash.replace('#','')];
+    if(type){
+      openModal(type,false);
+      return;
+    }
+    document.querySelectorAll('.modal-overlay.open').forEach(overlay=>{
+      const modalType=overlay.id.replace('Modal','');
+      closeModal(modalType,false);
+    });
   }
 
   // Close on overlay click
@@ -581,6 +616,9 @@
       }
     });
   });
+
+  window.addEventListener('hashchange',syncModalToRoute);
+  window.addEventListener('DOMContentLoaded',syncModalToRoute);
 
   // Generate reference number
   function genRef(){return 'AI-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).substr(2,4).toUpperCase();}
