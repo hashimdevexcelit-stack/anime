@@ -14,6 +14,7 @@
     --gold-rich:#C8920A; --gold-trim:#F0C040; --gold-shimmer:#FFE082;
     --crystal-blue:#38BDF8; --text-light:#EDE8FF; --text-muted:#9D8FBB;
     --border-gold:rgba(240,192,64,.35); --border-purple:rgba(168,85,247,.25);
+    --stack-top:82px;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;scroll-padding-top:100px;}
@@ -314,8 +315,8 @@
 
   .stack-card{
     position:sticky;
-    top:82px;
-    min-height:100vh;
+    top:var(--stack-top);
+    min-height:calc(100vh - var(--stack-top));
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -385,7 +386,7 @@
   .stack-card .pyramid-section,
   .stack-card .progression-section{
     padding:80px;
-    min-height:100vh;
+    min-height:calc(100vh - var(--stack-top));
     display:flex;flex-direction:column;justify-content:center;
     position:relative;
     z-index:1;
@@ -896,7 +897,7 @@
   const SCALE_STEP = 0.03;  // how much each buried card shrinks per layer
   const SCALE_MIN  = 0.88;  // never shrink below this
   const Y_STEP     = 12;    // px each buried card nudges up
-  const STACK_TOP  = 82;
+  const STACK_TOP  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stack-top')) || 82;
 
   function getActiveCardIndex() {
     let activeIndex = 0;
@@ -924,7 +925,9 @@
         card.style.transform = '';
         card.style.filter    = '';
       }
-      card.style.zIndex = String(i + 1);
+      card.style.zIndex = i <= activeIndex
+        ? String(stackCards.length + i)
+        : String(i);
     });
     syncChapterNav(activeIndex);
   }
