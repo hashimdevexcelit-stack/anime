@@ -59,66 +59,38 @@
   .ph-rule::before{content:'';position:absolute;left:0;top:-3px;width:7px;height:7px;background:var(--gold-trim);transform:rotate(45deg);box-shadow:0 0 10px rgba(240,192,64,.6);}
 
   /* ── PYRAMID SECTION ── */
-  .pyramid-section{
-    padding:100px 80px;
-    background:linear-gradient(180deg,var(--bg-deep) 0%,#0E0530 50%,var(--bg-deep) 100%);
-    position:relative;overflow:hidden;
-  }
-  .pyramid-inner{max-width:1100px;margin:0 auto;}
-  .pyramid-header{text-align:center;max-width:600px;margin:0 auto 70px;}
+  .section-title{font-family:'Cinzel',serif;font-size:clamp(26px,4vw,50px);font-weight:700;line-height:1.1;color:var(--text-light);margin-bottom:16px;}
+  .section-title .gold{color:var(--gold-trim);text-shadow:0 0 20px rgba(240,192,64,.4);}
+  .section-body{font-size:17px;color:var(--text-muted);line-height:1.9;letter-spacing:.3px;}
+  .pyramid-section{padding:120px 80px;background:linear-gradient(180deg,var(--bg-deep) 0%,#0E0530 50%,var(--bg-deep) 100%);position:relative;overflow:hidden;}
+  .pyramid-inner{max-width:1200px;margin:0 auto;}
+  .pyramid-header{text-align:center;max-width:640px;margin:0 auto 80px;}
   .pyramid-header .section-label{justify-content:center;}
   .pyramid-header .section-label::before{background:linear-gradient(to left,var(--gold-trim),transparent);}
-  .pyramid-title{font-family:'Cinzel',serif;font-size:clamp(28px,4vw,48px);font-weight:700;color:var(--text-light);margin-bottom:14px;}
-  .pyramid-title span{color:var(--gold-trim);}
-  .pyramid-sub{font-size:16px;color:var(--text-muted);line-height:1.8;}
-
-  /* Pyramid tiers */
   .pyramid-wrap{display:flex;flex-direction:column;align-items:center;}
-  .pyramid-tier{display:flex;align-items:center;justify-content:center;width:100%;}
-  .tier-shape{
-    position:relative;display:flex;align-items:center;justify-content:center;
-    padding:0 48px;height:var(--h,80px);width:var(--w,300px);
-    background:linear-gradient(135deg,var(--tf),var(--tt));
-    border:1px solid var(--tb);
-    clip-path:polygon(calc(var(--i1) + 3%) 0%,calc(100% - var(--i1) - 3%) 0%,calc(100% - var(--i2)) 100%,var(--i2) 100%);
-    cursor:none;transition:all .35s;text-align:center;
-    box-shadow:0 0 30px var(--tg);
-  }
+  .pyramid-tier{display:flex;align-items:center;justify-content:center;}
+  .tier-shape{position:relative;display:flex;align-items:center;justify-content:center;padding:0 60px;height:var(--h,80px);min-width:var(--mw,200px);background:linear-gradient(135deg,var(--tf),var(--tt));border:1px solid var(--tb);clip-path:polygon(calc(var(--i1,0px) + 4%) 0%,calc(100% - var(--i1,0px) - 4%) 0%,calc(100% - var(--i2,0px)) 100%,var(--i2,0px) 100%);cursor:none;transition:all .35s;text-align:center;box-shadow:0 0 30px var(--tg);}
   .tier-shape:hover{filter:brightness(1.15);box-shadow:0 0 50px var(--tg);transform:scale(1.02);}
-
-  /* Tooltip */
-  .tier-shape::after{
-    content:attr(data-desc);position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);
-    background:#120835;border:1px solid var(--border-gold);
-    padding:8px 16px;white-space:nowrap;
-    font-family:'Rajdhani',sans-serif;font-size:11px;letter-spacing:2px;color:var(--text-muted);
-    opacity:0;pointer-events:none;transition:opacity .3s;z-index:10;border-radius:4px;
-  }
+  .t1{--h:88px;--mw:260px;--i1:0px;--i2:20px;--tf:#C8920A;--tt:#F0C040;--tb:rgba(255,224,130,.6);--tg:rgba(240,192,64,.35);}
+  .t2{--h:82px;--mw:400px;--i1:20px;--i2:32px;--tf:#8B1FA8;--tt:#A855F7;--tb:rgba(192,132,252,.5);--tg:rgba(168,85,247,.3);}
+  .t3{--h:78px;--mw:550px;--i1:32px;--i2:44px;--tf:#5B1FA8;--tt:#7C3AED;--tb:rgba(168,85,247,.4);--tg:rgba(91,31,168,.3);}
+  .t4{--h:76px;--mw:700px;--i1:44px;--i2:56px;--tf:#2D1B69;--tt:#4C1D95;--tb:rgba(91,31,168,.4);--tg:rgba(91,31,168,.2);}
+  .t5{--h:74px;--mw:860px;--i1:56px;--i2:68px;--tf:#1A0D3E;--tt:#2D1B69;--tb:rgba(91,31,168,.3);--tg:rgba(91,31,168,.15);}
+  .t6{--h:72px;--mw:1020px;--i1:68px;--i2:0px;--tf:#0F0626;--tt:#1A0D3E;--tb:rgba(91,31,168,.2);--tg:rgba(91,31,168,.1);}
+  .tier-shape::after{content:attr(data-desc);position:absolute;bottom:calc(100% + 12px);left:50%;transform:translateX(-50%);background:#120835;border:1px solid var(--border-gold);padding:10px 18px;white-space:nowrap;font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:2px;color:var(--text-muted);opacity:0;pointer-events:none;transition:opacity .3s;z-index:10;}
   .tier-shape:hover::after{opacity:1;}
-
-  /* tier configs */
-  .t1{--h:82px;--w:260px;--i1:0px;--i2:22px;--tf:#C8920A;--tt:#F0C040;--tb:rgba(255,224,130,.6);--tg:rgba(240,192,64,.4);}
-  .t2{--h:78px;--w:420px;--i1:22px;--i2:34px;--tf:#8B1FA8;--tt:#A855F7;--tb:rgba(192,132,252,.5);--tg:rgba(168,85,247,.3);}
-  .t3{--h:74px;--w:570px;--i1:34px;--i2:46px;--tf:#5B1FA8;--tt:#7C3AED;--tb:rgba(168,85,247,.4);--tg:rgba(91,31,168,.3);}
-  .t4{--h:72px;--w:720px;--i1:46px;--i2:58px;--tf:#2D1B69;--tt:#4C1D95;--tb:rgba(91,31,168,.4);--tg:rgba(91,31,168,.2);}
-  .t5{--h:70px;--w:870px;--i1:58px;--i2:70px;--tf:#1A0D3E;--tt:#2D1B69;--tb:rgba(91,31,168,.3);--tg:rgba(91,31,168,.15);}
-  .t6{--h:68px;--w:1020px;--i1:70px;--i2:0px;--tf:#0F0626;--tt:#1A0D3E;--tb:rgba(91,31,168,.2);--tg:rgba(91,31,168,.1);}
-
-  .pyramid-connector{width:2px;height:10px;background:linear-gradient(to bottom,rgba(240,192,64,.6),rgba(240,192,64,.1));}
-  .pyramid-base{width:1020px;max-width:100%;height:3px;background:linear-gradient(to right,transparent,var(--gold-trim),var(--purple-crystal),var(--gold-trim),transparent);box-shadow:0 0 20px rgba(240,192,64,.3);}
-
-  .tier-content{position:relative;z-index:1;display:flex;align-items:center;gap:10px;}
-  .tier-icon{font-size:18px;line-height:1;}
-  .tier-name{font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:2px;white-space:nowrap;text-shadow:0 2px 8px rgba(0,0,0,.4);}
-  .tier-sub{font-size:10px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;opacity:.7;}
+  .pyramid-connector{width:2px;height:12px;background:linear-gradient(to bottom,var(--gold-trim),rgba(240,192,64,.2));}
+  .tier-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .tier-icon{font-size:20px;line-height:1;}
+  .tier-name{font-family:'Cinzel',serif;font-size:15px;font-weight:700;letter-spacing:2px;white-space:nowrap;text-shadow:0 2px 8px rgba(0,0,0,.4);}
+  .tier-sub{font-size:10px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
   .t1 .tier-name,.t1 .tier-sub{color:#06030F;}
-  .t2 .tier-name,.t2 .tier-sub,.t3 .tier-name,.t3 .tier-sub,
-  .t4 .tier-name,.t4 .tier-sub,.t5 .tier-name,.t5 .tier-sub,.t6 .tier-name,.t6 .tier-sub{color:rgba(255,255,255,.9);}
-  .tier-divider{width:1px;height:24px;background:rgba(255,255,255,.2);margin:0 4px;}
-
-  /* Legend cards */
+  .t1 .tier-sub{color:rgba(6,3,15,.6);}
+  .t2 .tier-name,.t2 .tier-sub,.t3 .tier-name,.t3 .tier-sub,.t4 .tier-name,.t4 .tier-sub,.t5 .tier-name,.t5 .tier-sub,.t6 .tier-name,.t6 .tier-sub{color:rgba(255,255,255,.9);}
+  .t2 .tier-sub,.t3 .tier-sub,.t4 .tier-sub,.t5 .tier-sub,.t6 .tier-sub{color:rgba(255,255,255,.55);}
+  .pyramid-base{width:100%;max-width:1020px;height:3px;background:linear-gradient(to right,transparent,var(--gold-trim),var(--purple-crystal),var(--gold-trim),transparent);box-shadow:0 0 20px rgba(240,192,64,.3);margin-top:0;}
   .pyramid-legend{margin-top:64px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin-left:auto;margin-right:auto;}
-  .legend-card{background:linear-gradient(135deg,#0D0720,#060312);border:1px solid var(--border-purple);padding:24px 20px;text-align:center;border-radius:16px;transition:all .3s;cursor:none;}
+  .legend-card{background:linear-gradient(135deg,#0D0720,#060312);border:1px solid var(--border-purple);padding:24px 20px;text-align:center;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);transition:all .3s;cursor:none;}
   .legend-card:hover{border-color:rgba(168,85,247,.4);transform:translateY(-3px);}
   .legend-dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-bottom:10px;}
   .legend-title{font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--text-light);margin-bottom:6px;}
@@ -307,21 +279,20 @@
 <div class="divider"></div>
 
 <!-- PYRAMID -->
-<section class="pyramid-section">
+<section class="pyramid-section" id="pyramid">
   <div class="pyramid-inner">
     <div class="pyramid-header reveal">
-      <div class="section-label">Hierarchy</div>
-      <h2 class="pyramid-title">The Staff <span>Pyramid</span></h2>
-      <p class="pyramid-sub">A structured hierarchy ensures every member of the realm is heard, protected, and treated fairly. Hover any tier to learn more.</p>
+      <div class="section-label">The Team Behind the Realm</div>
+      <h2 class="section-title">Staff <span class="gold">Ranks</span></h2>
+      <p class="section-body" style="text-align:center;">Anime Invasion is governed by a dedicated hierarchy of staff members who maintain the realm's integrity, events, and community standards. From founders at the apex to community guardians at the base.</p>
     </div>
 
     <div class="pyramid-wrap reveal rd1">
       <div class="pyramid-tier">
-        <div class="tier-shape t1" data-desc="Founding creators — absolute authority over the realm">
+        <div class="tier-shape t1" data-desc="The founding creators of the realm">
           <div class="tier-content">
             <span class="tier-icon">👑</span>
             <span class="tier-name">Founder</span>
-            <span class="tier-divider"></span>
             <span class="tier-sub">Realm Creator</span>
           </div>
         </div>
@@ -329,11 +300,10 @@
       <div class="pyramid-connector"></div>
 
       <div class="pyramid-tier">
-        <div class="tier-shape t2" data-desc="Oversees all departments, operations and major decisions">
+        <div class="tier-shape t2" data-desc="Oversees all departments and operations">
           <div class="tier-content">
             <span class="tier-icon">⚜️</span>
             <span class="tier-name">Co-Founder</span>
-            <span class="tier-divider"></span>
             <span class="tier-sub">Operations Lead</span>
           </div>
         </div>
@@ -341,11 +311,10 @@
       <div class="pyramid-connector"></div>
 
       <div class="pyramid-tier">
-        <div class="tier-shape t3" data-desc="Manages senior staff teams and handles major escalations">
+        <div class="tier-shape t3" data-desc="Manages senior staff and major decisions">
           <div class="tier-content">
             <span class="tier-icon">🛡️</span>
             <span class="tier-name">Head Administrator</span>
-            <span class="tier-divider"></span>
             <span class="tier-sub">Senior Management</span>
           </div>
         </div>
@@ -353,23 +322,21 @@
       <div class="pyramid-connector"></div>
 
       <div class="pyramid-tier">
-        <div class="tier-shape t4" data-desc="Runs server events and handles complex report escalations">
+        <div class="tier-shape t4" data-desc="Handles escalations and organises events">
           <div class="tier-content">
             <span class="tier-icon">⭐</span>
             <span class="tier-name">Senior Moderator</span>
-            <span class="tier-divider"></span>
-            <span class="tier-sub">Events & Escalations</span>
+            <span class="tier-sub">Escalations & Events</span>
           </div>
         </div>
       </div>
       <div class="pyramid-connector"></div>
 
       <div class="pyramid-tier">
-        <div class="tier-shape t5" data-desc="Enforces rules and supports the community daily">
+        <div class="tier-shape t5" data-desc="Enforces rules and supports the community">
           <div class="tier-content">
             <span class="tier-icon">🔷</span>
             <span class="tier-name">Moderator</span>
-            <span class="tier-divider"></span>
             <span class="tier-sub">Community Enforcement</span>
           </div>
         </div>
@@ -377,12 +344,11 @@
       <div class="pyramid-connector"></div>
 
       <div class="pyramid-tier">
-        <div class="tier-shape t6" data-desc="Newcomers proving their dedication to the realm">
+        <div class="tier-shape t6" data-desc="Newcomers learning the ropes of staff life">
           <div class="tier-content">
             <span class="tier-icon">🌱</span>
             <span class="tier-name">Trial Moderator</span>
-            <span class="tier-divider"></span>
-            <span class="tier-sub">Entry Level · Community Guardian</span>
+            <span class="tier-sub">Community Guardian · Entry Level</span>
           </div>
         </div>
       </div>
@@ -399,12 +365,12 @@
       <div class="legend-card">
         <div class="legend-dot" style="background:var(--purple-crystal);box-shadow:0 0 10px rgba(168,85,247,.5);"></div>
         <div class="legend-title">Administration</div>
-        <p class="legend-desc">Head Admins and Senior Mods manage staff teams, handle escalated reports, and organise major events.</p>
+        <p class="legend-desc">Head Admins and Senior Mods manage staff teams, handle escalated reports, and run major server events.</p>
       </div>
       <div class="legend-card">
         <div class="legend-dot" style="background:rgba(56,189,248,.8);box-shadow:0 0 10px rgba(56,189,248,.4);"></div>
         <div class="legend-title">Moderation</div>
-        <p class="legend-desc">Moderators and Trials are the frontline — enforcing rules, supporting players, and maintaining community health.</p>
+        <p class="legend-desc">Moderators and Trials are the frontline — enforcing rules, supporting players, and maintaining community health daily.</p>
       </div>
     </div>
   </div>
