@@ -319,30 +319,35 @@
     min-height:calc(100vh - var(--stack-top));
     display:flex;
     flex-direction:column;
-    justify-content:center;
-    overflow:hidden;
+    justify-content:flex-start;
+    overflow:visible;
     border-radius:28px 28px 0 0;
     border:1px solid rgba(240,192,64,.12);
     box-shadow:0 -12px 40px rgba(0,0,0,.3), 0 20px 80px rgba(0,0,0,.45);
+    background-color:#06030F;
     will-change:transform;
     transform-origin:center top;
     transition:transform .1s linear, filter .1s linear;
+    backface-visibility:hidden;
   }
 
   .stack-card.card-gold{
-    background:
+    background-color:#06030F;
+    background-image:
       radial-gradient(circle at top right,rgba(240,192,64,.14),transparent 32%),
       radial-gradient(circle at left 22% bottom 18%,rgba(168,85,247,.12),transparent 28%),
       linear-gradient(160deg,#0A0420 0%,#06030F 100%);
   }
   .stack-card.card-purple{
-    background:
+    background-color:#080418;
+    background-image:
       radial-gradient(circle at top center,rgba(168,85,247,.18),transparent 34%),
       radial-gradient(circle at right 18% bottom 16%,rgba(56,189,248,.1),transparent 26%),
       linear-gradient(160deg,#080418 0%,#12062B 58%,#06030F 100%);
   }
   .stack-card.card-blue{
-    background:
+    background-color:#07101F;
+    background-image:
       radial-gradient(circle at top left,rgba(56,189,248,.14),transparent 30%),
       radial-gradient(circle at right 22% center,rgba(240,192,64,.1),transparent 24%),
       linear-gradient(160deg,#07101F 0%,#09061A 55%,#06030F 100%);
@@ -359,6 +364,7 @@
     background:
       linear-gradient(180deg,rgba(255,255,255,.02),transparent 18%,transparent 82%,rgba(0,0,0,.16)),
       radial-gradient(circle at 50% 0%,rgba(255,255,255,.04),transparent 30%);
+    z-index:0;
     pointer-events:none;
   }
   .stack-card.card-gold::before{background:linear-gradient(to right,transparent,rgba(240,192,64,.6),transparent);}
@@ -385,9 +391,9 @@
   .stack-card .chapter,
   .stack-card .pyramid-section,
   .stack-card .progression-section{
-    padding:80px;
+    padding:110px 80px 96px;
     min-height:calc(100vh - var(--stack-top));
-    display:flex;flex-direction:column;justify-content:center;
+    display:flex;flex-direction:column;justify-content:flex-start;
     position:relative;
     z-index:1;
   }
