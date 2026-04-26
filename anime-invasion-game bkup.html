@@ -110,7 +110,7 @@
   }
 
   /* 16px border-radius on all cards */
-  .vis-panel{border-radius:16px;}
+  .vis-panel{border-radius:0px;}
   .legend-card{border-radius:16px;clip-path:none;}
   .realm-frame{border-radius:16px;}
   .realm-screen{border-radius:12px;}
@@ -306,78 +306,9 @@
     max-width:130px;margin:0 auto;
   }
 
-  /* ── TRUE STICKY CARD STACK ── */
-  .card-stack-container{
-    position:relative;
-  }
-
-  .stack-card{
-    position:sticky;
-    top:0;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    overflow:hidden;
-    border-radius:0;
-    /* Each card slightly different bg so stacking is visible */
-    will-change:transform;
-    transform-origin:center top;
-    transition:transform .1s linear;
-  }
-
-  /* Top-edge accent line per card */
-  .stack-card::before{
-    content:'';position:absolute;top:0;left:0;right:0;height:2px;z-index:10;
-  }
-  .stack-card.card-gold::before{background:linear-gradient(to right,transparent,rgba(240,192,64,.6),transparent);}
-  .stack-card.card-purple::before{background:linear-gradient(to right,transparent,rgba(168,85,247,.6),transparent);}
-  .stack-card.card-blue::before{background:linear-gradient(to right,transparent,rgba(56,189,248,.5),transparent);}
-  .stack-card.card-teal::before{background:linear-gradient(to right,transparent,rgba(52,211,153,.5),transparent);}
-  .stack-card.card-red::before{background:linear-gradient(to right,transparent,rgba(248,113,113,.4),transparent);}
-
-  /* Card counter badge */
-  .stack-card-num{
-    position:absolute;top:28px;right:48px;
-    font-family:'Cinzel',serif;font-size:10px;font-weight:700;
-    letter-spacing:5px;color:rgba(240,192,64,.2);
-    z-index:20;pointer-events:none;
-  }
-
-  /* Scale down cards as they get buried — JS applies inline transform */
-  .stack-card.buried{
-    transform:scale(var(--buried-scale,0.96)) translateY(var(--buried-y,-20px));
-  }
-
-  /* Keep section padding inside cards consistent */
-  .stack-card .what-section,
-  .stack-card .chapter,
-  .stack-card .pyramid-section,
-  .stack-card .progression-section{
-    padding:80px;
-    min-height:100vh;
-    display:flex;flex-direction:column;justify-content:center;
-  }
-
-  /* Backgrounds per card */
-  .sc-bg-1{background:linear-gradient(160deg,#0A0420 0%,#06030F 100%);}
-  .sc-bg-2{background:linear-gradient(160deg,#06030F 0%,#0C0422 100%);}
-  .sc-bg-3{background:linear-gradient(160deg,#080418 0%,#0A041C 100%);}
-  .sc-bg-4{background:linear-gradient(160deg,#0C0520 0%,#06030F 100%);}
-  .sc-bg-5{background:linear-gradient(160deg,#06030F 0%,#0C051E 100%);}
-  .sc-bg-6{background:linear-gradient(160deg,#0A0520 0%,#0E0530 100%);}
-  .sc-bg-7{background:linear-gradient(160deg,#06030F 0%,#080418 100%);}
-
-  /* Remove old dividers between cards */
-  .card-stack-container .divider{display:none;}
-
-  /* OVERRIDE: remove old what-section/chapter specific backgrounds */
-  .card-stack-container .what-section{background:transparent!important;}
-  .card-stack-container .chapter{background:transparent!important;}
-  .card-stack-container .pyramid-section{background:transparent!important;}
-
+  /* CTA */
   .cta-section{padding:80px;background:var(--bg-deep);text-align:center;}
-  .cta-inner{max-width:1200px;margin:0 auto;padding:80px;border:1px solid var(--border-gold);background:linear-gradient(135deg,rgba(91,31,168,.15),rgba(6,3,15,.92) 50%,rgba(200,146,10,.08));position:relative;overflow:hidden;border-radius:20px;}
+  .cta-inner{max-width:1200px;margin:0 auto;padding:80px;border:1px solid var(--border-gold);background:linear-gradient(135deg,rgba(91,31,168,.15),rgba(6,3,15,.92) 50%,rgba(200,146,10,.08));position:relative;overflow:hidden;}
   .cta-inner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 50%,rgba(91,31,168,.2),transparent);}
   .cta-title{font-family:'Cinzel Decorative',serif;font-size:clamp(26px,4vw,50px);font-weight:700;color:var(--text-light);margin-bottom:14px;position:relative;z-index:1;}
   .cta-sub{font-size:16px;color:var(--text-muted);margin-bottom:40px;letter-spacing:1px;position:relative;z-index:1;}
@@ -413,7 +344,7 @@
     <li><a href="anime-invasion-game.html" class="active">The Game</a></li>
     <li><a href="anime-invasion-media.html">Media</a></li>
     <li><a href="anime-invasion-staff.html">Staff</a></li>
-    <li><a href="anime-invasion-support.html">Support</a></li>
+    <li><a href="anime-invasion-report.html">Report / Appeals</a></li>
   </ul>
   <a href="https://www.roblox.com" target="_blank" class="nav-cta">Play Free</a>
 </nav>
@@ -463,45 +394,38 @@
 <div class="divider"></div>
 
 <!-- WHAT IS -->
-
-<div class="card-stack-container">
-
-  <!-- CARD 1: OVERVIEW -->
-  <div class="stack-card card-gold" id="card-overview">
-    <span class="stack-card-num">01 / 06</span>
-    <section class="what-section">
-      <div class="what-inner">
-        <div class="what-text reveal">
-          <div class="section-label">What Is Anime Invasion</div>
-          <h2 class="section-title">A Celestial Realm <span class="hl">Built for Legends</span></h2>
-          <p class="section-body">Anime Invasion is a grand open-world Roblox experience set in a breathtaking divine kingdom of towering gold spires, crystal sanctuaries, and ancient sacred grounds. Wield powerful anime abilities, form clans, and fight for dominance across the realm's contested territories.</p>
-          <p class="section-body">Our Early Access experience focuses on polished core systems — <strong>open-world exploration, fast-paced combat, and deep clan warfare</strong> — alongside creator-first tools for community events, seasonal invasions, and evolving world lore. Jump in, make your mark, and help us grow this realm together.</p>
-          <div class="what-badges">
-            <span class="badge b-p">⚔️ Open World PvP</span>
-            <span class="badge b-g">👑 Clan Warfare</span>
-            <span class="badge b-b">✨ 50+ Abilities</span>
-            <span class="badge b-p">🌍 Live World Events</span>
-            <span class="badge b-g">🆓 Free to Play</span>
-            <span class="badge b-b">🏰 Territory Control</span>
-          </div>
-        </div>
-        <div class="reveal rd1">
-          <div class="realm-frame">
-            <div class="realm-screen"><span class="realm-screen-label">✦ The Celestial Realm ✦</span></div>
-            <div class="realm-meta">
-              <span class="realm-meta-title">Anime Invasion — Live</span>
-              <span class="realm-stat"><span class="live-dot"></span>Players Online</span>
-            </div>
-          </div>
+<section class="what-section">
+  <div class="what-inner">
+    <div class="what-text reveal">
+      <div class="section-label">What Is Anime Invasion</div>
+      <h2 class="section-title">A Celestial Realm <span class="hl">Built for Legends</span></h2>
+      <p class="section-body">Anime Invasion is a grand open-world Roblox experience set in a breathtaking divine kingdom of towering gold spires, crystal sanctuaries, and ancient sacred grounds. Wield powerful anime abilities, form clans, and fight for dominance across the realm's contested territories.</p>
+      <p class="section-body">Our Early Access experience focuses on polished core systems — <strong>open-world exploration, fast-paced combat, and deep clan warfare</strong> — alongside creator-first tools for community events, seasonal invasions, and evolving world lore. Jump in, make your mark, and help us grow this realm together.</p>
+      <div class="what-badges">
+        <span class="badge b-p">⚔️ Open World PvP</span>
+        <span class="badge b-g">👑 Clan Warfare</span>
+        <span class="badge b-b">✨ 50+ Abilities</span>
+        <span class="badge b-p">🌍 Live World Events</span>
+        <span class="badge b-g">🆓 Free to Play</span>
+        <span class="badge b-b">🏰 Territory Control</span>
+      </div>
+    </div>
+    <div class="reveal rd1">
+      <div class="realm-frame">
+        <div class="realm-screen"><span class="realm-screen-label">✦ The Celestial Realm ✦</span></div>
+        <div class="realm-meta">
+          <span class="realm-meta-title">Anime Invasion — Live</span>
+          <span class="realm-stat"><span class="live-dot"></span>Players Online</span>
         </div>
       </div>
-    </section>
+    </div>
   </div>
+</section>
 
-  <!-- CARD 2: THE WORLD -->
-  <div class="stack-card card-gold" id="card-adventure">
-    <span class="stack-card-num">02 / 06</span>
-    <section class="chapter chapter-bg-a" id="adventure">
+<div class="divider"></div>
+
+<!-- THE WORLD -->
+<section class="chapter chapter-bg-a" id="adventure">
   <div class="chapter-inner">
     <div class="chapter-grid text-left mb-chapter reveal">
       <div class="chapter-text">
@@ -554,12 +478,11 @@
     </div>
   </div>
 </section>
-  </div><!-- end card-adventure -->
 
-  <!-- CARD 3: COMBAT -->
-  <div class="stack-card card-purple" id="card-combat">
-    <span class="stack-card-num">03 / 06</span>
-    <section class="chapter chapter-bg-b" id="combat">
+<div class="divider"></div>
+
+<!-- COMBAT -->
+<section class="chapter chapter-bg-b" id="combat">
   <div class="chapter-inner">
     <div class="chapter-grid text-right mb-chapter reveal">
       <div class="chapter-text">
@@ -595,12 +518,11 @@
     </div>
   </div>
 </section>
-  </div><!-- end card-combat -->
 
-  <!-- CARD 4: CLANS -->
-  <div class="stack-card card-blue" id="card-clans">
-    <span class="stack-card-num">04 / 06</span>
-    <section class="chapter chapter-bg-c" id="clans">
+<div class="divider"></div>
+
+<!-- CLANS -->
+<section class="chapter chapter-bg-c" id="clans">
   <div class="chapter-inner">
     <div class="chapter-grid text-right mb-chapter reveal">
       <div class="chapter-text">
@@ -637,12 +559,11 @@
     </div>
   </div>
 </section>
-  </div><!-- end card-clans -->
 
-  <!-- CARD 5: PROGRESSION -->
-  <div class="stack-card card-gold" id="card-progression">
-    <span class="stack-card-num">05 / 06</span>
-    <section class="chapter chapter-bg-a" id="progression">
+<div class="divider"></div>
+
+<!-- PROGRESSION -->
+<section class="chapter chapter-bg-a" id="progression">
   <div class="chapter-inner">
 
     <div style="text-align:center;max-width:700px;margin:0 auto 70px;" class="reveal">
@@ -709,12 +630,11 @@
 
   </div>
 </section>
-  </div><!-- end card-progression -->
 
-  <!-- CARD 6: STAFF -->
-  <div class="stack-card card-purple" id="card-staff">
-    <span class="stack-card-num">06 / 06</span>
-    <section class="pyramid-section" id="staff">
+<div class="divider"></div>
+
+<!-- STAFF PYRAMID -->
+<section class="pyramid-section" id="staff">
   <div class="pyramid-inner">
     <div class="pyramid-header reveal">
       <div class="section-label">The Team Behind the Realm</div>
@@ -778,9 +698,6 @@
     </div>
   </div>
 </section>
-  </div><!-- end card-staff -->
-
-</div><!-- end .card-stack -->
 
 <div class="divider"></div>
 
@@ -813,8 +730,8 @@
         <li><a href="anime-invasion-landing.html">Home</a></li>
         <li><a href="anime-invasion-game.html">The Game</a></li>
         <li><a href="#">Media</a></li>
-        <li><a href="anime-invasion-staff.html">Staff</a></li>
-        <li><a href="#">Support</a></li>
+        <li><a href="#">Staff</a></li>
+        <li><a href="#">Report / Appeals</a></li>
       </ul>
     </div>
     <div class="footer-links">
@@ -852,46 +769,11 @@
     el.addEventListener('mouseleave',()=>{cursor.style.transform='scale(1)';ring.style.borderColor='var(--purple-crystal)';});
   });
 
-  // ── STICKY CARD STACKING ENGINE ──────────────────────
-  // Cards are position:sticky top:0 min-height:100vh
-  // As you scroll, the active card pins while the next slides over it.
-  // Cards behind get scaled down + darkened to feel physically pushed back.
-  const stackCards = Array.from(document.querySelectorAll('.stack-card'));
-
-  const SCALE_STEP = 0.03;  // how much each buried card shrinks per layer
-  const SCALE_MIN  = 0.88;  // never shrink below this
-  const Y_STEP     = 12;    // px each buried card nudges up
-
-  function updateCardStack() {
-    stackCards.forEach((card, i) => {
-      const rect = card.getBoundingClientRect();
-      // Count how many cards are currently stuck at the top above this one
-      let buried = 0;
-      for (let j = 0; j < i; j++) {
-        if (stackCards[j].getBoundingClientRect().top <= 1) buried++;
-      }
-      if (buried > 0) {
-        const s = Math.max(SCALE_MIN, 1 - buried * SCALE_STEP);
-        const y = -buried * Y_STEP;
-        const b = Math.max(0.35, 1 - buried * 0.18);
-        card.style.transform = `scale(${s}) translateY(${y}px)`;
-        card.style.filter    = `brightness(${b})`;
-      } else {
-        card.style.transform = '';
-        card.style.filter    = '';
-      }
-      card.style.zIndex = i + 2;
-    });
-  }
-
-  window.addEventListener('scroll', updateCardStack, {passive:true});
-  updateCardStack();
-
-  // Scroll reveal (elements inside cards)
+  // Scroll reveal
   const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:.1});
   document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-  // Side nav reveal on first scroll
+  // Side nav — reveal on first scroll
   const chapterNav=document.getElementById('chapterNav');
   let navRevealed=false;
   window.addEventListener('scroll',()=>{
@@ -901,7 +783,7 @@
     }
   },{passive:true});
 
-  // Chapter nav scroll spy
+  // Chapter nav spy
   const sections=['overview','adventure','combat','clans','progression','staff'];
   const chLinks=document.querySelectorAll('.chapter-link');
   const spy=new IntersectionObserver(e=>{
