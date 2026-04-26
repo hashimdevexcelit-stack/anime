@@ -924,7 +924,7 @@
         card.style.transform = '';
         card.style.filter    = '';
       }
-      card.style.zIndex = String(stackCards.length - i);
+      card.style.zIndex = String(i + 1);
     });
     syncChapterNav(activeIndex);
   }
