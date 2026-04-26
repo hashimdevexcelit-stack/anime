@@ -16,7 +16,7 @@
     --border-gold:rgba(240,192,64,.35); --border-purple:rgba(168,85,247,.25);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth;scroll-padding-top:100px;}
   body{background:var(--bg-deep);color:var(--text-light);font-family:'Rajdhani',sans-serif;overflow-x:hidden;cursor:none;}
   .cursor{position:fixed;width:12px;height:12px;background:var(--gold-trim);border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:difference;}
   .cursor-ring{position:fixed;width:36px;height:36px;border:1px solid var(--purple-crystal);border-radius:50%;pointer-events:none;z-index:9998;transition:all .15s ease;}
@@ -309,26 +309,56 @@
   /* ── TRUE STICKY CARD STACK ── */
   .card-stack-container{
     position:relative;
+    isolation:isolate;
   }
 
   .stack-card{
     position:sticky;
-    top:0;
+    top:82px;
     min-height:100vh;
     display:flex;
     flex-direction:column;
     justify-content:center;
     overflow:hidden;
-    border-radius:0;
-    /* Each card slightly different bg so stacking is visible */
+    border-radius:28px 28px 0 0;
+    border:1px solid rgba(240,192,64,.12);
+    box-shadow:0 -12px 40px rgba(0,0,0,.3), 0 20px 80px rgba(0,0,0,.45);
     will-change:transform;
     transform-origin:center top;
-    transition:transform .1s linear;
+    transition:transform .1s linear, filter .1s linear;
+  }
+
+  .stack-card.card-gold{
+    background:
+      radial-gradient(circle at top right,rgba(240,192,64,.14),transparent 32%),
+      radial-gradient(circle at left 22% bottom 18%,rgba(168,85,247,.12),transparent 28%),
+      linear-gradient(160deg,#0A0420 0%,#06030F 100%);
+  }
+  .stack-card.card-purple{
+    background:
+      radial-gradient(circle at top center,rgba(168,85,247,.18),transparent 34%),
+      radial-gradient(circle at right 18% bottom 16%,rgba(56,189,248,.1),transparent 26%),
+      linear-gradient(160deg,#080418 0%,#12062B 58%,#06030F 100%);
+  }
+  .stack-card.card-blue{
+    background:
+      radial-gradient(circle at top left,rgba(56,189,248,.14),transparent 30%),
+      radial-gradient(circle at right 22% center,rgba(240,192,64,.1),transparent 24%),
+      linear-gradient(160deg,#07101F 0%,#09061A 55%,#06030F 100%);
   }
 
   /* Top-edge accent line per card */
   .stack-card::before{
     content:'';position:absolute;top:0;left:0;right:0;height:2px;z-index:10;
+  }
+  .stack-card::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.02),transparent 18%,transparent 82%,rgba(0,0,0,.16)),
+      radial-gradient(circle at 50% 0%,rgba(255,255,255,.04),transparent 30%);
+    pointer-events:none;
   }
   .stack-card.card-gold::before{background:linear-gradient(to right,transparent,rgba(240,192,64,.6),transparent);}
   .stack-card.card-purple::before{background:linear-gradient(to right,transparent,rgba(168,85,247,.6),transparent);}
@@ -357,6 +387,8 @@
     padding:80px;
     min-height:100vh;
     display:flex;flex-direction:column;justify-content:center;
+    position:relative;
+    z-index:1;
   }
 
   /* Backgrounds per card */
@@ -375,6 +407,7 @@
   .card-stack-container .what-section{background:transparent!important;}
   .card-stack-container .chapter{background:transparent!important;}
   .card-stack-container .pyramid-section{background:transparent!important;}
+  .card-stack-container [id]{scroll-margin-top:120px;}
 
   .cta-section{padding:80px;background:var(--bg-deep);text-align:center;}
   .cta-inner{max-width:1200px;margin:0 auto;padding:80px;border:1px solid var(--border-gold);background:linear-gradient(135deg,rgba(91,31,168,.15),rgba(6,3,15,.92) 50%,rgba(200,146,10,.08));position:relative;overflow:hidden;border-radius:20px;}
@@ -419,12 +452,12 @@
 </nav>
 
 <nav class="chapter-nav" id="chapterNav">
-  <a href="#overview" class="chapter-link active" data-label="Overview"><span class="ch-tooltip">Overview</span></a>
-  <a href="#adventure" class="chapter-link" data-label="The World"><span class="ch-tooltip">The World</span></a>
-  <a href="#combat" class="chapter-link" data-label="Combat"><span class="ch-tooltip">Combat</span></a>
-  <a href="#clans" class="chapter-link" data-label="Clans"><span class="ch-tooltip">Clans</span></a>
-  <a href="#progression" class="chapter-link" data-label="Progression"><span class="ch-tooltip">Progression</span></a>
-  <a href="#staff" class="chapter-link" data-label="Staff Ranks"><span class="ch-tooltip">Staff Ranks</span></a>
+  <a href="#card-overview" class="chapter-link active" data-label="Overview"><span class="ch-tooltip">Overview</span></a>
+  <a href="#card-adventure" class="chapter-link" data-label="The World"><span class="ch-tooltip">The World</span></a>
+  <a href="#card-combat" class="chapter-link" data-label="Combat"><span class="ch-tooltip">Combat</span></a>
+  <a href="#card-clans" class="chapter-link" data-label="Clans"><span class="ch-tooltip">Clans</span></a>
+  <a href="#card-progression" class="chapter-link" data-label="Progression"><span class="ch-tooltip">Progression</span></a>
+  <a href="#card-staff" class="chapter-link" data-label="Staff Ranks"><span class="ch-tooltip">Staff Ranks</span></a>
 </nav>
 
 <!-- HERO -->
@@ -857,31 +890,43 @@
   // As you scroll, the active card pins while the next slides over it.
   // Cards behind get scaled down + darkened to feel physically pushed back.
   const stackCards = Array.from(document.querySelectorAll('.stack-card'));
+  const chapterNav=document.getElementById('chapterNav');
+  const chLinks=Array.from(document.querySelectorAll('.chapter-link'));
 
   const SCALE_STEP = 0.03;  // how much each buried card shrinks per layer
   const SCALE_MIN  = 0.88;  // never shrink below this
   const Y_STEP     = 12;    // px each buried card nudges up
+  const STACK_TOP  = 82;
+
+  function getActiveCardIndex() {
+    let activeIndex = 0;
+    stackCards.forEach((card, i) => {
+      if (card.getBoundingClientRect().top <= STACK_TOP + 2) activeIndex = i;
+    });
+    return activeIndex;
+  }
+
+  function syncChapterNav(activeIndex) {
+    chLinks.forEach((link, i) => link.classList.toggle('active', i === activeIndex));
+  }
 
   function updateCardStack() {
+    const activeIndex = getActiveCardIndex();
     stackCards.forEach((card, i) => {
-      const rect = card.getBoundingClientRect();
-      // Count how many cards are currently stuck at the top above this one
-      let buried = 0;
-      for (let j = 0; j < i; j++) {
-        if (stackCards[j].getBoundingClientRect().top <= 1) buried++;
-      }
-      if (buried > 0) {
-        const s = Math.max(SCALE_MIN, 1 - buried * SCALE_STEP);
-        const y = -buried * Y_STEP;
-        const b = Math.max(0.35, 1 - buried * 0.18);
+      const buriedDepth = Math.max(0, activeIndex - i);
+      if (buriedDepth > 0) {
+        const s = Math.max(SCALE_MIN, 1 - buriedDepth * SCALE_STEP);
+        const y = -buriedDepth * Y_STEP;
+        const b = Math.max(0.45, 1 - buriedDepth * 0.14);
         card.style.transform = `scale(${s}) translateY(${y}px)`;
-        card.style.filter    = `brightness(${b})`;
+        card.style.filter    = `brightness(${b}) saturate(${Math.max(0.78, 1 - buriedDepth * 0.05)})`;
       } else {
         card.style.transform = '';
         card.style.filter    = '';
       }
-      card.style.zIndex = i + 2;
+      card.style.zIndex = String(stackCards.length - i);
     });
+    syncChapterNav(activeIndex);
   }
 
   window.addEventListener('scroll', updateCardStack, {passive:true});
@@ -892,7 +937,6 @@
   document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
   // Side nav reveal on first scroll
-  const chapterNav=document.getElementById('chapterNav');
   let navRevealed=false;
   window.addEventListener('scroll',()=>{
     if(!navRevealed && window.scrollY > 80){
@@ -901,19 +945,15 @@
     }
   },{passive:true});
 
-  // Chapter nav scroll spy
-  const sections=['overview','adventure','combat','clans','progression','staff'];
-  const chLinks=document.querySelectorAll('.chapter-link');
-  const spy=new IntersectionObserver(e=>{
-    e.forEach(x=>{
-      if(x.isIntersecting){
-        chLinks.forEach(l=>l.classList.remove('active'));
-        const m=document.querySelector(`.chapter-link[href="#${x.target.id}"]`);
-        if(m)m.classList.add('active');
-      }
+  chLinks.forEach((link, i) => {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      const target = stackCards[i];
+      if (!target) return;
+      const targetTop = window.scrollY + target.getBoundingClientRect().top - STACK_TOP;
+      window.scrollTo({ top: targetTop, behavior: 'smooth' });
     });
-  },{rootMargin:'-40% 0px -55% 0px'});
-  sections.forEach(id=>{const el=document.getElementById(id);if(el)spy.observe(el);});
+  });
 </script>
 </body>
 </html>
