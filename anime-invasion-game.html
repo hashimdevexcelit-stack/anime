@@ -306,75 +306,59 @@
     max-width:130px;margin:0 auto;
   }
 
-  /* ── TRUE STICKY CARD STACK ── */
+  /* ── CARD ENTRANCE SYSTEM ──
+     Each card is normal flow (not sticky), sits in its full natural height,
+     and slides in from below as you scroll to it. Cards behind scale down
+     slightly for depth — but only until the next card fully covers them.
+     No brightness darkening on content. No overflow clipping.
+  ── */
   .card-stack-container{
     position:relative;
   }
 
+  /* Each card is a full-bleed panel, natural height, normal scroll */
   .stack-card{
-    position:sticky;
-    top:0;
+    position:relative;
+    width:100%;
     min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    overflow:hidden;
-    border-radius:0;
-    /* Each card slightly different bg so stacking is visible */
+    /* Cards stack visually via z-index + transform on entry */
     will-change:transform;
-    transform-origin:center top;
-    transition:transform .1s linear;
+    transform-origin:top center;
+    /* Solid opaque background — must cover previous card */
+    background:#06030F;
   }
 
-  /* Top-edge accent line per card */
+  /* Top-edge accent line */
   .stack-card::before{
-    content:'';position:absolute;top:0;left:0;right:0;height:2px;z-index:10;
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;z-index:10;pointer-events:none;
   }
-  .stack-card.card-gold::before{background:linear-gradient(to right,transparent,rgba(240,192,64,.6),transparent);}
-  .stack-card.card-purple::before{background:linear-gradient(to right,transparent,rgba(168,85,247,.6),transparent);}
-  .stack-card.card-blue::before{background:linear-gradient(to right,transparent,rgba(56,189,248,.5),transparent);}
-  .stack-card.card-teal::before{background:linear-gradient(to right,transparent,rgba(52,211,153,.5),transparent);}
-  .stack-card.card-red::before{background:linear-gradient(to right,transparent,rgba(248,113,113,.4),transparent);}
+  .stack-card.card-gold::before  {background:linear-gradient(to right,transparent,rgba(240,192,64,.7),transparent);}
+  .stack-card.card-purple::before {background:linear-gradient(to right,transparent,rgba(168,85,247,.7),transparent);}
+  .stack-card.card-blue::before   {background:linear-gradient(to right,transparent,rgba(56,189,248,.6),transparent);}
 
-  /* Card counter badge */
+  /* Card counter */
   .stack-card-num{
     position:absolute;top:28px;right:48px;
     font-family:'Cinzel',serif;font-size:10px;font-weight:700;
-    letter-spacing:5px;color:rgba(240,192,64,.2);
+    letter-spacing:5px;color:rgba(240,192,64,.18);
     z-index:20;pointer-events:none;
   }
 
-  /* Scale down cards as they get buried — JS applies inline transform */
-  .stack-card.buried{
-    transform:scale(var(--buried-scale,0.96)) translateY(var(--buried-y,-20px));
-  }
-
-  /* Keep section padding inside cards consistent */
-  .stack-card .what-section,
-  .stack-card .chapter,
-  .stack-card .pyramid-section,
-  .stack-card .progression-section{
+  /* Inner sections — transparent bg, natural padding */
+  .card-stack-container .what-section,
+  .card-stack-container .chapter,
+  .card-stack-container .pyramid-section{
+    background:transparent!important;
     padding:80px;
-    min-height:100vh;
-    display:flex;flex-direction:column;justify-content:center;
   }
 
-  /* Backgrounds per card */
-  .sc-bg-1{background:linear-gradient(160deg,#0A0420 0%,#06030F 100%);}
-  .sc-bg-2{background:linear-gradient(160deg,#06030F 0%,#0C0422 100%);}
-  .sc-bg-3{background:linear-gradient(160deg,#080418 0%,#0A041C 100%);}
-  .sc-bg-4{background:linear-gradient(160deg,#0C0520 0%,#06030F 100%);}
-  .sc-bg-5{background:linear-gradient(160deg,#06030F 0%,#0C051E 100%);}
-  .sc-bg-6{background:linear-gradient(160deg,#0A0520 0%,#0E0530 100%);}
-  .sc-bg-7{background:linear-gradient(160deg,#06030F 0%,#080418 100%);}
-
-  /* Remove old dividers between cards */
-  .card-stack-container .divider{display:none;}
-
-  /* OVERRIDE: remove old what-section/chapter specific backgrounds */
-  .card-stack-container .what-section{background:transparent!important;}
-  .card-stack-container .chapter{background:transparent!important;}
-  .card-stack-container .pyramid-section{background:transparent!important;}
+  /* Unique dark gradient per card */
+  .sc-bg-1{background:linear-gradient(160deg,#0A0420 0%,#06030F 100%)!important;}
+  .sc-bg-2{background:linear-gradient(160deg,#080316 0%,#0C0422 100%)!important;}
+  .sc-bg-3{background:linear-gradient(160deg,#06030F 0%,#0D0428 100%)!important;}
+  .sc-bg-4{background:linear-gradient(160deg,#0A041C 0%,#06030F 100%)!important;}
+  .sc-bg-5{background:linear-gradient(160deg,#06030F 0%,#0C051E 100%)!important;}
+  .sc-bg-6{background:linear-gradient(160deg,#0A0520 0%,#0E0530 100%)!important;}
 
   .cta-section{padding:80px;background:var(--bg-deep);text-align:center;}
   .cta-inner{max-width:1200px;margin:0 auto;padding:80px;border:1px solid var(--border-gold);background:linear-gradient(135deg,rgba(91,31,168,.15),rgba(6,3,15,.92) 50%,rgba(200,146,10,.08));position:relative;overflow:hidden;border-radius:20px;}
@@ -408,12 +392,12 @@
 <div class="cursor-ring" id="cursorRing"></div>
 
 <nav class="main-nav">
-  <a href="index.html" class="nav-logo">Anime Invasion</a>
+  <a href="anime-invasion-landing.html" class="nav-logo">Anime Invasion</a>
   <ul class="nav-links">
     <li><a href="anime-invasion-game.html" class="active">The Game</a></li>
-    <li><a href="anime-invasion-media.html">Media</a></li>
+    <li><a href="#">Media</a></li>
     <li><a href="anime-invasion-staff.html">Staff</a></li>
-    <li><a href="anime-invasion-report.html">Support</a></li>
+    <li><a href="#">Support</a></li>
   </ul>
   <a href="https://www.roblox.com" target="_blank" class="nav-cta">Play Free</a>
 </nav>
@@ -431,7 +415,7 @@
 <section class="page-header" id="overview">
   <div class="page-header-inner">
     <div class="ph-breadcrumb">
-      <a href="index.html">Home</a>
+      <a href="anime-invasion-landing.html">Home</a>
       <span class="ph-breadcrumb-sep">✦</span>
       <span>The Game</span>
     </div>
@@ -467,7 +451,7 @@
 <div class="card-stack-container">
 
   <!-- CARD 1: OVERVIEW -->
-  <div class="stack-card card-gold" id="card-overview">
+  <div class="stack-card card-gold sc-bg-1" id="card-overview">
     <span class="stack-card-num">01 / 06</span>
     <section class="what-section">
       <div class="what-inner">
@@ -499,7 +483,7 @@
   </div>
 
   <!-- CARD 2: THE WORLD -->
-  <div class="stack-card card-gold" id="card-adventure">
+  <div class="stack-card card-gold sc-bg-2" id="card-adventure">
     <span class="stack-card-num">02 / 06</span>
     <section class="chapter chapter-bg-a" id="adventure">
   <div class="chapter-inner">
@@ -557,7 +541,7 @@
   </div><!-- end card-adventure -->
 
   <!-- CARD 3: COMBAT -->
-  <div class="stack-card card-purple" id="card-combat">
+  <div class="stack-card card-purple sc-bg-3" id="card-combat">
     <span class="stack-card-num">03 / 06</span>
     <section class="chapter chapter-bg-b" id="combat">
   <div class="chapter-inner">
@@ -598,7 +582,7 @@
   </div><!-- end card-combat -->
 
   <!-- CARD 4: CLANS -->
-  <div class="stack-card card-blue" id="card-clans">
+  <div class="stack-card card-blue sc-bg-4" id="card-clans">
     <span class="stack-card-num">04 / 06</span>
     <section class="chapter chapter-bg-c" id="clans">
   <div class="chapter-inner">
@@ -640,7 +624,7 @@
   </div><!-- end card-clans -->
 
   <!-- CARD 5: PROGRESSION -->
-  <div class="stack-card card-gold" id="card-progression">
+  <div class="stack-card card-gold sc-bg-5" id="card-progression">
     <span class="stack-card-num">05 / 06</span>
     <section class="chapter chapter-bg-a" id="progression">
   <div class="chapter-inner">
@@ -712,7 +696,7 @@
   </div><!-- end card-progression -->
 
   <!-- CARD 6: STAFF -->
-  <div class="stack-card card-purple" id="card-staff">
+  <div class="stack-card card-purple sc-bg-6" id="card-staff">
     <span class="stack-card-num">06 / 06</span>
     <section class="pyramid-section" id="staff">
   <div class="pyramid-inner">
@@ -795,7 +779,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
         Play Now — Free
       </a>
-      <a href="index.html" class="btn-outline">← Back to Home</a>
+      <a href="anime-invasion-landing.html" class="btn-outline">← Back to Home</a>
     </div>
   </div>
 </section>
@@ -804,17 +788,17 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a href="index.html" class="nav-logo" style="text-decoration:none;">Anime Invasion</a>
+      <a href="anime-invasion-landing.html" class="nav-logo" style="text-decoration:none;">Anime Invasion</a>
       <p>A royal anime universe on Roblox. Enter the celestial realm, battle, and ascend.</p>
     </div>
     <div class="footer-links">
       <h4>Navigate</h4>
       <ul>
-        <li><a href="index.html">Home</a></li>
+        <li><a href="anime-invasion-landing.html">Home</a></li>
         <li><a href="anime-invasion-game.html">The Game</a></li>
-        <li><a href="anime-invasion-media.html">Media</a></li>
+        <li><a href="#">Media</a></li>
         <li><a href="anime-invasion-staff.html">Staff</a></li>
-        <li><a href="anime-invasion-report.html">Support</a></li>
+        <li><a href="#">Support</a></li>
       </ul>
     </div>
     <div class="footer-links">
@@ -852,68 +836,64 @@
     el.addEventListener('mouseleave',()=>{cursor.style.transform='scale(1)';ring.style.borderColor='var(--purple-crystal)';});
   });
 
-  // ── STICKY CARD STACKING ENGINE ──────────────────────
-  // Cards are position:sticky top:0 min-height:100vh
-  // As you scroll, the active card pins while the next slides over it.
-  // Cards behind get scaled down + darkened to feel physically pushed back.
+  // ── CARD ENTRANCE ENGINE ─────────────────────────────
+  // Each card slides up from below as you scroll to it.
+  // No darkening. No sticky overflow issues. Full content scrolls naturally.
   const stackCards = Array.from(document.querySelectorAll('.stack-card'));
 
-  const SCALE_STEP = 0.03;  // how much each buried card shrinks per layer
-  const SCALE_MIN  = 0.88;  // never shrink below this
-  const Y_STEP     = 12;    // px each buried card nudges up
+  // Assign z-index so later cards layer on top
+  stackCards.forEach((card, i) => {
+    card.style.zIndex = i + 2;
+    if (i === 0) {
+      card.style.transform = 'translateY(0)';
+      card.style.opacity = '1';
+    } else {
+      card.style.transform = 'translateY(56px)';
+      card.style.opacity = '0';
+      card.style.transition = 'transform 0.75s cubic-bezier(0.22,1,0.36,1), opacity 0.6s ease';
+    }
+  });
 
-  function updateCardStack() {
-    stackCards.forEach((card, i) => {
-      const rect = card.getBoundingClientRect();
-      // Count how many cards are currently stuck at the top above this one
-      let buried = 0;
-      for (let j = 0; j < i; j++) {
-        if (stackCards[j].getBoundingClientRect().top <= 1) buried++;
+  const cardObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.transform = 'translateY(0)';
+        entry.target.style.opacity = '1';
       }
-      if (buried > 0) {
-        const s = Math.max(SCALE_MIN, 1 - buried * SCALE_STEP);
-        const y = -buried * Y_STEP;
-        const b = Math.max(0.35, 1 - buried * 0.18);
-        card.style.transform = `scale(${s}) translateY(${y}px)`;
-        card.style.filter    = `brightness(${b})`;
-      } else {
-        card.style.transform = '';
-        card.style.filter    = '';
-      }
-      card.style.zIndex = i + 2;
     });
-  }
+  }, { threshold: 0.06 });
 
-  window.addEventListener('scroll', updateCardStack, {passive:true});
-  updateCardStack();
+  stackCards.forEach(card => cardObserver.observe(card));
 
-  // Scroll reveal (elements inside cards)
-  const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:.1});
-  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  // Scroll reveal for elements inside cards
+  const obs = new IntersectionObserver(e => e.forEach(x => {
+    if (x.isIntersecting) x.target.classList.add('visible');
+  }), { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
   // Side nav reveal on first scroll
-  const chapterNav=document.getElementById('chapterNav');
-  let navRevealed=false;
-  window.addEventListener('scroll',()=>{
-    if(!navRevealed && window.scrollY > 80){
+  const chapterNav = document.getElementById('chapterNav');
+  let navRevealed = false;
+  window.addEventListener('scroll', () => {
+    if (!navRevealed && window.scrollY > 80) {
       chapterNav.classList.add('visible');
-      navRevealed=true;
+      navRevealed = true;
     }
-  },{passive:true});
+  }, { passive: true });
 
   // Chapter nav scroll spy
-  const sections=['overview','adventure','combat','clans','progression','staff'];
-  const chLinks=document.querySelectorAll('.chapter-link');
-  const spy=new IntersectionObserver(e=>{
-    e.forEach(x=>{
-      if(x.isIntersecting){
-        chLinks.forEach(l=>l.classList.remove('active'));
-        const m=document.querySelector(`.chapter-link[href="#${x.target.id}"]`);
-        if(m)m.classList.add('active');
+  const sections = ['overview','adventure','combat','clans','progression','staff'];
+  const chLinks = document.querySelectorAll('.chapter-link');
+  const spy = new IntersectionObserver(e => {
+    e.forEach(x => {
+      if (x.isIntersecting) {
+        chLinks.forEach(l => l.classList.remove('active'));
+        const m = document.querySelector(`.chapter-link[href="#${x.target.id}"]`);
+        if (m) m.classList.add('active');
       }
     });
-  },{rootMargin:'-40% 0px -55% 0px'});
-  sections.forEach(id=>{const el=document.getElementById(id);if(el)spy.observe(el);});
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(id => { const el = document.getElementById(id); if (el) spy.observe(el); });
 </script>
 </body>
 </html>
